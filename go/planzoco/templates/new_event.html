@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Event - planzoco</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+</head>
+<body>
+    <h1>planzoco</h1>
+    <h2>Create New Event</h2>
+    
+    {{if .error}}
+        <p style="color: red">{{.error}}</p>
+    {{end}}
+    
+    <form action="/events" method="POST">
+        <div>
+            <label for="name">Event Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <button type="submit">Create Event</button>
+    </form>
+</body>
+</html> 

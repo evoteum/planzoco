@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.event.Name}} - planzoco</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>planzoco</h1>
+    <h2>{{.event.Name}}</h2>
+    <a href="/events/new" class="nav-link">Create another Event</a>
+    <p class="instructions">What does your group need to decide?</p>
+    <div class="card">
+        <div class="qa-grid">
+            {{range .event.Questions}}
+                <div class="qa-row">
+                    <div class="question-text">{{.Text}}</div>
+                    <div class="answer-text">
+                        {{with .WinningOptions}}
+                            {{range $i, $opt := .}}
+                                {{if $i}}, {{end}}
+                                {{$opt.Text}}
+                            {{end}}
+                        {{else}}
+                            No votes yet
+                        {{end}}
+                    </div>
+                    <a href="/questions/{{.ID}}" class="vote-link">Vote!</a>
+                </div>
+            {{end}}
+        </div>
+
+        <form class="form" action="/events/{{.event.ID}}/questions" method="POST">
+            <input type="text" name="text" id="questionInput" placeholder="New question" required autofocus>
+            <button type="submit">Add Question</button>
+        </form>
+    </div>
+
+    <div class="share-card">
+        <h3>Share with Your Group</h3>
+        <p>Send this link to invite others to suggest and vote:</p>
+        <div class="share-url-container">
+            <span class="share-url">{{.baseURL}}/events/{{.event.ID}}</span>
+            <button class="copy-button" onclick="navigator.clipboard.writeText('{{.baseURL}}/events/{{.event.ID}}')">Copy</button>
+        </div>
+    </div>
+
+    <script>
+        const examples = [
+            "Where should we go?",
+            "What time works best?",
+            "What kind of food do we want?",
+            "Indoor or outdoor activity?",
+            "Which weekend works for everyone?",
+            "How long should we plan for?",
+            "What's our budget range?"
+        ];
+        const input = document.getElementById('questionInput');
+        const randomExample = examples[Math.floor(Math.random() * examples.length)];
+        input.placeholder = `New question eg '${randomExample}'`;
+    </script>
+</body>
+</html> 

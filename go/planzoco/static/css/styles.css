@@ -1,0 +1,383 @@
+/* Modern CSS Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Global styles */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f8fafc;
+    color: #334155;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Add a container div for all content */
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Typography */
+h1 {
+    color: #0f172a;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 2rem 0;
+}
+
+h2 {
+    color: #1e293b;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 1.5rem 0;
+}
+
+h3 {
+    color: #334155;
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+/* Add after the existing h1 styles */
+h1 + h2 {
+    color: #475569;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+}
+
+/* Navigation */
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color: #2563eb;
+}
+
+.nav-link::before {
+    content: "←";
+    margin-right: 0.5rem;
+}
+
+/* Cards and Lists */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.options {
+    display: grid;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.option {
+    display: grid;
+    grid-template-columns: 1fr 120px auto;
+    align-items: center;
+    padding: 1.25rem;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.option:hover {
+    border-color: #94a3b8;
+    transform: translateX(4px);
+}
+
+.option-text {
+    font-size: 1.1rem;
+    color: #334155;
+}
+
+.votes {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: right;
+    padding-right: 1.5rem;
+}
+
+/* Forms */
+.form {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+input[type="text"] {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+button {
+    padding: 0.75rem 1.5rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Event list */
+.events-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.event {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.event:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.event h2 {
+    margin-top: 0;
+}
+
+.event a {
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.event a:hover {
+    color: #2563eb;
+}
+
+/* Error messages */
+.error {
+    color: #ef4444;
+    padding: 1rem;
+    background-color: #fef2f2;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #fee2e2;
+}
+
+.qa-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.qa-row {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) minmax(200px, 2fr) auto;
+    gap: 2rem;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s;
+}
+
+.qa-row:hover {
+    background-color: #f1f5f9;
+}
+
+.question-text {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.answer-text {
+    color: #334155;
+}
+
+.edit-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.edit-link:hover {
+    text-decoration: underline;
+}
+
+.vote-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border: 2px solid #3b82f6;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.vote-link:hover {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.button-link {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #3b82f6;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-top: 2rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.button-link:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.button-link:active {
+    transform: translateY(0);
+}
+
+/* Share URL styling */
+.share-url {
+    background: #f3f4f6;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-family: monospace;
+    border: 1px solid #e5e7eb;
+    margin: 0 0.5rem;
+    display: inline-block;
+    -webkit-user-select: all;
+    -moz-user-select: all;
+    -ms-user-select: all;
+    user-select: all;
+}
+
+.share-url::selection {
+    background: rgba(59, 130, 246, 0.2); /* Light blue highlight */
+}
+
+.share-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    text-align: center;
+    color: #334155;
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    z-index: 1;
+}
+
+.share-card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.share-card p {
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+.share-url-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.copy-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.error-card {
+    max-width: 600px;
+    text-align: center;
+}
+
+.error-card h2 {
+    color: #ef4444;
+    margin-bottom: 1rem;
+}
+
+.error-card p {
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.header-container .nav-link {
+    margin-bottom: 0;
+}
+
+.header-container h2 {
+    margin: 0;
+}
+
+.instructions {
+    color: #64748b;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    text-align: center;
+}

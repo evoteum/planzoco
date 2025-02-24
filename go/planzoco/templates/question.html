@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.question.Text}} - planzoco</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>planzoco</h1>
+    <h2>{{.event.Name}}</h2>
+    <a href="/events/{{.event.ID}}" class="nav-link">Back to Event</a>
+    <p class="instructions">Add your suggestions and vote on them!</p>
+    <div class="card">
+        <h2>{{.question.Text}}</h2>
+        
+        <div class="options">
+            {{range .question.Options}}
+                <div class="option">
+                    <p class="option-text">{{.Text}}</p>
+                    <span class="votes">Votes: {{.Votes}}</span>
+                    <form action="/options/{{.ID}}/vote" method="POST">
+                        <button type="submit">Vote</button>
+                    </form>
+                </div>
+            {{end}}
+        </div>
+
+        <form class="form" action="/questions/{{.question.ID}}/options" method="POST">
+            <input type="text" name="text" id="optionInput" placeholder="New option" required autofocus>
+            <button type="submit">Add Option</button>
+        </form>
+    </div>
+
+    <script>
+        const examples = [
+            "Pizza Hut",
+            "Next Friday at 7pm",
+            "Central Park",
+            "Bowling",
+            "Italian cuisine",
+            "Saturday afternoon",
+            "The local pub"
+        ];
+        const input = document.getElementById('optionInput');
+        const randomExample = examples[Math.floor(Math.random() * examples.length)];
+        input.placeholder = `New option eg '${randomExample}'`;
+    </script>
+</body>
+</html>
