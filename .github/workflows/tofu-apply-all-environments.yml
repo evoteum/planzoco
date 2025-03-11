@@ -1,0 +1,21 @@
+###################################################################################
+# ⚠️ This file is controlled by OpenTofu in the estate-repos repository.
+#    Manual changes will be overwritten the next time OpenTofu runs.
+###################################################################################
+
+name: tofu-apply-all-environments
+
+on:
+  push:
+    paths:
+      - "disabled"
+
+permissions:
+  id-token: write
+  contents: write
+  actions: write
+
+jobs:
+  call-workflow:
+    uses: evoteum/estate-reusable-workflows/.github/workflows/tofu-apply-all-environments.yml@main
+    
