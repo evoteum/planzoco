@@ -6,6 +6,7 @@
 name: tofu-apply-all-environments
 
 on:
+  workflow_dispatch:
 
 
   
