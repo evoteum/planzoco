@@ -6,6 +6,7 @@
 name: container-build-and-push
 
 on:
+  workflow_dispatch:
 
 
   
