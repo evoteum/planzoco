@@ -1,5 +1,5 @@
 ###################################################################################
-# ⚠️ This file is controlled by OpenTofu in the estate-repos repository.
+# ⚠️ This file is controlled by OpenTofu in the  repository.
 #    Manual changes will be overwritten the next time OpenTofu runs.
 ###################################################################################
 
@@ -7,15 +7,13 @@ name: container-build-and-push
 
 on:
   push:
-    paths:
-      - "disabled"
+    
 
-permissions:
-  id-token: write
-  contents: write
-  actions: write
+  
+
+
 
 jobs:
-  call-workflow:
+  call-container-build-and-push:
     uses: evoteum/estate-reusable-workflows/.github/workflows/container-build-and-push.yml@main
     
