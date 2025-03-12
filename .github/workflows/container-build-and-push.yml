@@ -6,8 +6,7 @@
 name: container-build-and-push
 
 on:
-  push:
-    
+
 
   
 
