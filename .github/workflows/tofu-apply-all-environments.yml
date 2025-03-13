@@ -7,13 +7,10 @@ name: tofu-apply-all-environments
 
 on:
   workflow_dispatch:
-
-
-  
-
-
+  push:
+    paths:
+      - "*/**"
 
 jobs:
   call-tofu-apply-all-environments:
     uses: evoteum/estate-reusable-workflows/.github/workflows/tofu-apply-all-environments.yml@main
-    
