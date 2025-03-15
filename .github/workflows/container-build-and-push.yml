@@ -8,6 +8,8 @@ name: container-build-and-push
 on:
   workflow_dispatch:
 
+permissions:
+
 jobs:
   call-container-build-and-push:
     uses: evoteum/estate-reusable-workflows/.github/workflows/container-build-and-push.yml@main
