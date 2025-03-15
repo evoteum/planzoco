@@ -11,6 +11,11 @@ on:
     paths:
       - "*/**"
 
+permissions:
+  actions: write
+  contents: write
+  id-token: write
+
 jobs:
   call-tofu-apply-all-environments:
     uses: evoteum/estate-reusable-workflows/.github/workflows/tofu-apply-all-environments.yml@main
