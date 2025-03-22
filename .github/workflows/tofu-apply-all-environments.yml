@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "tofu/**"
+      - "go/planzoco/**"
 
 permissions:
   actions: write
