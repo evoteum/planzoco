@@ -23,12 +23,17 @@ available for use within GitHub Actions here in the `planzoco` repo.
 - `TOFU_STATE_BUCKET_NAME`
 
 ### Variables
+- `APP_NAME`
 - `AWS_REGION`
+- `BUILD_FLAGS`
 - `FAIL_FAST`
+- `LANGUAGE_VERSION`
 - `QUAY_DOMAIN`
 - `QUAY_OAUTH2_USERNAME`
 - `QUAY_ROBOT_USERNAME`
 - `QUAY_URL`
+- `TARGET_ARCH`
+- `TARGET_OS`
 - `TERRAFORM_DOCS_IS_TOFU_COMPATIBLE`
 - `TOFU_IS_JUNIT_COMPATIBLE`
 
