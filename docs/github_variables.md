@@ -46,6 +46,7 @@ If a repository variable and an organisation variable share the same name, the r
 ### Variables
 - `ARTEFACT_TYPE`
 - `LANGUAGE`
+- `LANGUAGE_VERSION`
 - `QUAY_REPOSITORY_PATH`
 - `QUAY_REPOSITORY_URL`
 - `SOURCE_PATH`
