@@ -1,13 +1,11 @@
-variable "project_name" {
+variable "repository_name" {
   type        = string
-  description = "The name of the project"
-  default     = "planzoco"
+  description = "The name of this repository (The name of the project). Provided by CI."
 }
 
-variable "container_image" {
+variable "quay_repository_path" {
   type        = string
-  description = "The container image"
-  default     = "evoteum/planzoco:latest"
+  description = "Path to the quay repository. Provided by CI."
 }
 
 variable "container_port" {
