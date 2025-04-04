@@ -4,7 +4,7 @@ locals {
 }
 
 module "networking" {
-  source = "github.com:evoteum/tofu-modules//aws/networking"
+  source = "github.com/evoteum/tofu-modules//aws/networking"
 
   project_name         = var.repository_name
   vpc_cidr             = var.vpc_cidr
@@ -14,14 +14,14 @@ module "networking" {
 }
 
 module "dynamodb" {
-  source = "github.com:evoteum/tofu-modules//aws/dynamodb"
+  source = "github.com/evoteum/tofu-modules//aws/dynamodb"
 
   project_name = var.repository_name
   environment  = local.environment
 }
 
 module "app_runner" {
-  source = "github.com:evoteum/tofu-modules//aws/app_runner"
+  source = "github.com/evoteum/tofu-modules//aws/app_runner"
 
   project_name    = var.repository_name
   container_image = local.container_image

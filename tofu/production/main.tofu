@@ -18,6 +18,6 @@ provider "aws" {
 }
 
 module "common" {
-  source = "github.com:evoteum/tofu-modules.git//common/vars?ref=main"
+  source = "github.com/evoteum/tofu-modules.git//common/vars"
 }
 
