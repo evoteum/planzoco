@@ -28,6 +28,7 @@ available for use within GitHub Actions here in the `planzoco` repo.
 - `BUILD_FLAGS`
 - `FAIL_FAST`
 - `LANGUAGE_VERSION`
+- `PERMITTED_ENVIRONMENTS`
 - `QUAY_DOMAIN`
 - `QUAY_OAUTH2_USERNAME`
 - `QUAY_ROBOT_USERNAME`
