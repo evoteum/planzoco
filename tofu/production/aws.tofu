@@ -13,7 +13,7 @@ module "aws_networking" {
   ]
   private_subnets = var.private_subnet_cidrs
   project_name    = var.repository_name
-  public_subnet   = var.public_subnet_cidrs
+  public_subnets  = var.public_subnet_cidrs
   vpc_cidr        = var.vpc_cidr
 }
 
