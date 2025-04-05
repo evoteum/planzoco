@@ -16,8 +16,3 @@ terraform {
 provider "aws" {
   region = var.aws_region
 }
-
-module "common" {
-  source = "github.com/evoteum/tofu-modules.git//common/vars"
-}
-
