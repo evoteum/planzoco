@@ -6,12 +6,15 @@ locals {
 module "aws_networking" {
   source = "github.com/evoteum/tofu-modules//aws/networking"
 
-  aws_region           = var.aws_region
-  container_port       = var.container_port
-  private_subnet_cidrs = var.private_subnet_cidrs
-  project_name         = var.repository_name
-  public_subnet_cidrs  = var.public_subnet_cidrs
-  vpc_cidr             = var.vpc_cidr
+  availability_zones = [
+    "euw2-az1",
+    "euw2-az2",
+    "euw2-az3",
+  ]
+  private_subnets = var.private_subnet_cidrs
+  project_name    = var.repository_name
+  public_subnet   = var.public_subnet_cidrs
+  vpc_cidr        = var.vpc_cidr
 }
 
 module "aws_dynamodb" {
@@ -26,6 +29,7 @@ module "aws_app_runner" {
 
   project_name    = var.repository_name
   container_image = local.container_image
+  container_port  = var.container_port
   custom_domain   = var.homepage_url
   aws_region      = var.aws_region
 
