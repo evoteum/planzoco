@@ -3,7 +3,7 @@ locals {
   environment     = basename(path.cwd)
 }
 
-module "networking" {
+module "aws_networking" {
   source = "github.com/evoteum/tofu-modules//aws/networking"
 
   project_name         = var.repository_name
@@ -13,18 +13,19 @@ module "networking" {
   container_port       = var.container_port
 }
 
-module "dynamodb" {
+module "aws_dynamodb" {
   source = "github.com/evoteum/tofu-modules//aws/dynamodb"
 
   project_name = var.repository_name
   environment  = local.environment
 }
 
-module "app_runner" {
+module "aws_app_runner" {
   source = "github.com/evoteum/tofu-modules//aws/app_runner"
 
   project_name    = var.repository_name
   container_image = local.container_image
+  custom_domain   = var.homepage_url
 
   runtime_environment_variables = {
     AWS_REGION     = var.aws_region
