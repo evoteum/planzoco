@@ -29,7 +29,7 @@ module "aws_app_runner" {
 
   project_name    = var.repository_name
   container_image = local.container_image
-  container_port  = var.container_port
+  port            = var.container_port
   custom_domain   = var.homepage_url
   aws_region      = var.aws_region
 
