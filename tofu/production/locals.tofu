@@ -1,2 +1,3 @@
 locals {
+  environment = dirname(".")
 }
