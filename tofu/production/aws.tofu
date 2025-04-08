@@ -1,6 +1,5 @@
 locals {
   container_image = "${var.quay_repository_path}:latest"
-  environment     = basename(path.cwd)
 }
 
 module "aws_dynamodb" {
