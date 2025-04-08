@@ -3,25 +3,21 @@ locals {
   environment     = basename(path.cwd)
 }
 
-module "aws_networking" {
-  source = "github.com/evoteum/tofu-modules//aws/networking"
-
-  availability_zones = [
-    "euw2-az1",
-    "euw2-az2",
-    "euw2-az3",
-  ]
-  private_subnets = var.private_subnet_cidrs
-  project_name    = var.repository_name
-  public_subnets  = var.public_subnet_cidrs
-  vpc_cidr        = var.vpc_cidr
-}
-
 module "aws_dynamodb" {
   source = "github.com/evoteum/tofu-modules//aws/dynamodb"
 
   project_name = var.repository_name
   environment  = local.environment
+  attributes = [
+    {
+      name = "event_id"
+      type = "S"
+    },
+    {
+      name = "user_id"
+      type = "s"
+    }
+  ]
 }
 
 module "aws_app_runner" {
