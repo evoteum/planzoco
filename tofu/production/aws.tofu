@@ -27,6 +27,7 @@ module "aws_app_runner" {
   port            = var.container_port
   custom_domain   = var.homepage_url
   aws_region      = var.aws_region
+  database_arns   = module.aws_dynamodb.table_arn
 
   runtime_environment_variables = {
     AWS_REGION     = var.aws_region
