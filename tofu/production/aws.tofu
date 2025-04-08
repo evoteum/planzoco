@@ -31,6 +31,6 @@ module "aws_app_runner" {
 
   runtime_environment_variables = {
     AWS_REGION     = var.aws_region
-    DYNAMODB_TABLE = module.dynamodb.table_name
+    DYNAMODB_TABLE = module.aws_dynamodb.table_name
   }
 }
