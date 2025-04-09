@@ -7,6 +7,7 @@ module "aws_dynamodb" {
 
   project_name = var.repository_name
   environment  = local.environment
+  table_name = "users"
 }
 
 module "aws_app_runner" {
