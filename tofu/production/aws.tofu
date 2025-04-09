@@ -7,16 +7,6 @@ module "aws_dynamodb" {
 
   project_name = var.repository_name
   environment  = local.environment
-  attributes = [
-    {
-      name = "event_id"
-      type = "S"
-    },
-    {
-      name = "user_id"
-      type = "s"
-    }
-  ]
 }
 
 module "aws_app_runner" {
