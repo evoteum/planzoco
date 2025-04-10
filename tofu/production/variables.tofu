@@ -42,3 +42,13 @@ variable "vpc_cidr" {
   description = "CIDR block for VPC"
   default     = "10.0.0.0/16"
 }
+
+variable "repository_url" {
+  description = "The web address of the git repository"
+  type        = string
+}
+
+variable "organisation" {
+  description = "The name of the organisation"
+  type = string
+}

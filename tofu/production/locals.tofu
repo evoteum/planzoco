@@ -1,3 +1,3 @@
 locals {
-  environment = dirname(".")
+  environment = basename(abspath(path.module))
 }
