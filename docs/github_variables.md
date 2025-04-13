@@ -10,6 +10,7 @@ available for use within GitHub Actions here in the `planzoco` repo.
 
 ## Organisation
 ### Secrets
+- `AWS_APPRUNNER_CONNECTION_ARN`
 - `AWS_ROLE_TO_ASSUME`
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
