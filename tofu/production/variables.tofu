@@ -1,3 +1,9 @@
+variable "aws_apprunner_connection_arn" {
+  description = "Amazon Resource Name of the estate aws_apprunner_connection"
+  type        = string
+  sensitive   = true
+}
+
 variable "aws_region" {
   type        = string
   description = "The AWS region"
@@ -12,6 +18,21 @@ variable "container_port" {
 
 variable "homepage_url" {
   description = "The web address of publicly available application"
+  type        = string
+}
+
+variable "language" {
+  type        = string
+  description = "The language that this project is written in"
+}
+
+variable "language_version" {
+  type        = string
+  description = "The version of the language that this project is written in"
+}
+
+variable "organisation" {
+  description = "The name of the organisation"
   type        = string
 }
 
@@ -37,18 +58,13 @@ variable "repository_name" {
   description = "The name of this repository (The name of the project). Provided by CI."
 }
 
-variable "vpc_cidr" {
-  type        = string
-  description = "CIDR block for VPC"
-  default     = "10.0.0.0/16"
-}
-
 variable "repository_url" {
   description = "The web address of the git repository"
   type        = string
 }
 
-variable "organisation" {
-  description = "The name of the organisation"
-  type = string
+variable "vpc_cidr" {
+  type        = string
+  description = "CIDR block for VPC"
+  default     = "10.0.0.0/16"
 }
