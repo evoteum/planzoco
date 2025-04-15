@@ -7,7 +7,6 @@ module "aws_app_runner" {
 
   application_source_uri       = var.repository_url
   aws_apprunner_connection_arn = var.aws_apprunner_connection_arn
-  aws_region                   = var.aws_region
   build_command                = "go build -o app ./go/planzoco"
   custom_domain                = var.homepage_url
   organisation                 = var.organisation
