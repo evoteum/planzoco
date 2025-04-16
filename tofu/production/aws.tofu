@@ -9,15 +9,13 @@ module "aws_app_runner" {
   aws_apprunner_connection_arn = var.aws_apprunner_connection_arn
   build_command                = "go build -o app ./go/planzoco"
   custom_domain                = var.homepage_url
+  dynamodb_arns                = [module.aws_dynamodb.table_arn]
   organisation                 = var.organisation
   port                         = var.container_port
   project_name                 = var.repository_name
   runtime = {
     language = var.language
     version  = var.language_version
-  }
-  service_arns = {
-    databases = [module.aws_dynamodb.table_arn]
   }
   start_command = "./app"
 
