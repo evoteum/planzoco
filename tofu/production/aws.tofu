@@ -5,11 +5,11 @@ locals {
 module "aws_app_runner" {
   source = "github.com/evoteum/tofu-modules//aws/app_runner"
 
-  application_source_uri       = var.repository_url
   aws_apprunner_connection_arn = var.aws_apprunner_connection_arn
   build_command                = "go build -o app ./go/planzoco"
   custom_domain                = var.homepage_url
   dynamodb_arns                = [module.aws_dynamodb.table_arn]
+  github_repository            = var.repository_url
   organisation                 = var.organisation
   port                         = var.container_port
   project_name                 = var.repository_name
