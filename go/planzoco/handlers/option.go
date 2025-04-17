@@ -1,10 +1,10 @@
-package handlers
+package github.com/evoteum/planzoco/go/planzoco/handlers
 
 import (
 	"net/http"
-	"planzoco/databases"
-	"planzoco/models"
-	"planzoco/utils"
+	"github.com/evoteum/planzoco/go/planzoco/databases"
+	"github.com/evoteum/planzoco/go/planzoco/models"
+	"github.com/evoteum/planzoco/go/planzoco/utils"
 
 	"github.com/gin-gonic/gin"
 )

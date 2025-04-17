@@ -1,4 +1,4 @@
-package models
+package github.com/evoteum/planzoco/go/planzoco/models
 
 import (
 	"testing"

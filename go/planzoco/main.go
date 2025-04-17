@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"planzoco/databases"
-	"planzoco/routes"
+    "github.com/evoteum/planzoco/go/planzoco/databases"
+    "github.com/evoteum/planzoco/go/planzoco/routes"
 )
 
 func main() {

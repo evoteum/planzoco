@@ -1,4 +1,4 @@
-package handlers
+package github.com/evoteum/planzoco/go/planzoco/handlers
 
 import (
 	"net/http"
