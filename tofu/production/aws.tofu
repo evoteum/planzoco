@@ -6,7 +6,19 @@ module "aws_app_runner" {
   source = "github.com/evoteum/tofu-modules//aws/app_runner"
 
   aws_apprunner_connection_arn = var.aws_apprunner_connection_arn
-  build_command                = "go build -o app ."
+build_command = <<EOT
+set -ex
+pwd
+ls -al
+echo "==== go version ===="
+go version
+echo "==== go env ===="
+go env
+echo "==== go.mod ===="
+cat go.mod
+echo "==== building ===="
+go build -xo app .
+EOT
   custom_domain                = var.homepage_url
   dynamodb_arns                = [module.aws_dynamodb.table_arn]
   github_repository            = var.repository_url
