@@ -63,6 +63,11 @@ variable "repository_url" {
   type        = string
 }
 
+variable "source_path" {
+  description = "The filepath to the source code from the repo root"
+  type        = string
+}
+
 variable "vpc_cidr" {
   type        = string
   description = "CIDR block for VPC"
