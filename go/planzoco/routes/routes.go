@@ -1,4 +1,4 @@
-package github.com/evoteum/planzoco/go/planzoco/routes
+package routes
 
 import (
 	"github.com/evoteum/planzoco/go/planzoco/handlers"

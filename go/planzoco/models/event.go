@@ -1,4 +1,4 @@
-package github.com/evoteum/planzoco/go/planzoco/models
+package models
 
 type Event struct {
 	ID        string     `json:"id"`

@@ -1,4 +1,4 @@
-package github.com/evoteum/planzoco/go/planzoco/databases
+package databases
 
 import (
 	"context"
