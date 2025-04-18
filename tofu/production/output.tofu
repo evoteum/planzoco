@@ -3,5 +3,5 @@ output "environment" {
 }
 
 output "runtime" {
-  value = "${var.language}:${var.language_version}"
+  value = module.aws_app_runner.runtime
 }
