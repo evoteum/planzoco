@@ -22,6 +22,7 @@ func SetupRoutes() *gin.Engine {
 	r.POST("/questions/:id/options", handlers.CreateOption)
 	r.POST("/options/:id/vote", handlers.VoteOption)
 	r.GET("/questions/:id", handlers.GetQuestion)
+    r.GET("/healthz", handlers.HealthCheck)
 
 	return r
 }
