@@ -9,7 +9,7 @@ module "aws_app_runner" {
   build_command                = "go build main.go"
   custom_domain                = var.homepage_url
   dynamodb_arns                = [module.aws_dynamodb.table_arn]
-  github_repository            = "https://github.com/evoteum/testy-mctestface/"
+  github_repository            = var.repository_url
   organisation                 = var.organisation
   port                         = var.container_port
   project_name                 = var.repository_name
@@ -17,7 +17,7 @@ module "aws_app_runner" {
     language = var.language
     version  = var.language_version
   }
-  source_directory = "/"
+  source_directory = var.source_path
   start_command    = "./main"
 
   runtime_environment_variables = {

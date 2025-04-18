@@ -7,8 +7,9 @@ import (
 )
 
 func main() {
-	if err := databases.InitDB(); err != nil {
-		log.Fatal("Failed to initialize database:", err)
+	ctx := context.Background()
+	if err := databases.InitDB(ctx); err != nil {
+		log.Fatal(err)
 	}
 
 	r := routes.SetupRoutes()

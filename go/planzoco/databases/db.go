@@ -2,27 +2,34 @@ package databases
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-var (
-	DynamoClient *dynamodb.Client
-)
+var DB *dynamodb.Client
 
-func InitDB() error {
-	// Load AWS configuration
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithRegion(os.Getenv("AWS_REGION")),
-	)
-	if err != nil {
-		log.Printf("unable to load SDK config, %v", err)
-		return err
+func InitDB(ctx context.Context) error {
+	tableName := os.Getenv("DYNAMODB_TABLE")
+	if tableName == "" {
+		return fmt.Errorf("DYNAMODB_TABLE not set")
 	}
 
-	DynamoClient = dynamodb.NewFromConfig(cfg)
+	cfg, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to load AWS config: %w", err)
+	}
+
+	DB = dynamodb.NewFromConfig(cfg)
+
+	_, err = DB.DescribeTable(ctx, &dynamodb.DescribeTableInput{
+		TableName: &tableName,
+	})
+	if err != nil {
+		return fmt.Errorf("could not describe table %s: %w", tableName, err)
+	}
+
 	return nil
 }
