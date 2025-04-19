@@ -1,9 +1,9 @@
 package models
 
 type Event struct {
-	ID        string     `json:"id"`
-	Name      string     `json:"name" form:"name" binding:"required"`
-	Questions []Question `json:"questions,omitempty"`
+	ID        string     `json:"id" form:"id" dynamodbav:"id"`
+	Name      string     `json:"name" form:"name" binding:"required" dynamodbav:"name"`
+	Questions []Question `json:"questions,omitempty" form:"questions" dynamodbav:"questions"`
 }
 
 type Question struct {

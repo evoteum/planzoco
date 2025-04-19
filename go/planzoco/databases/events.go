@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/evoteum/planzoco/go/planzoco/databases"
 	"github.com/evoteum/planzoco/go/planzoco/models"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -19,7 +20,7 @@ func CreateEvent(event models.Event) error {
 		return err
 	}
 
-	_, err = DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
+	_, err = DB.PutItem(context.TODO(), &dynamodb.PutItemInput{
 		TableName: aws.String(os.Getenv("DYNAMODB_TABLE")),
 		Item:      item,
 	})
@@ -27,7 +28,7 @@ func CreateEvent(event models.Event) error {
 }
 
 func GetEvent(eventID string) (*models.Event, error) {
-	result, err := DynamoClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+	result, err := DB.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		TableName: aws.String(os.Getenv("DYNAMODB_TABLE")),
 		Key: map[string]types.AttributeValue{
 			"event_id": &types.AttributeValueMemberS{Value: eventID},
@@ -51,7 +52,7 @@ func GetEvent(eventID string) (*models.Event, error) {
 }
 
 func ListEvents() ([]models.Event, error) {
-	result, err := DynamoClient.Scan(context.TODO(), &dynamodb.ScanInput{
+	result, err := DB.Scan(context.TODO(), &dynamodb.ScanInput{
 		TableName: aws.String(os.Getenv("DYNAMODB_TABLE")),
 	})
 	if err != nil {
@@ -69,7 +70,7 @@ func ListEvents() ([]models.Event, error) {
 
 func AddOption(questionID string, option models.Option) error {
 	// Get the event containing the question
-	result, err := DynamoClient.Query(context.TODO(), &dynamodb.QueryInput{
+	result, err := DB.Query(context.TODO(), &dynamodb.QueryInput{
 		TableName:              aws.String(os.Getenv("DYNAMODB_TABLE")),
 		IndexName:              aws.String("EventQuestions"),
 		KeyConditionExpression: aws.String("question_id = :qid"),
@@ -86,7 +87,7 @@ func AddOption(questionID string, option models.Option) error {
 	}
 
 	// Update the question with the new option
-	_, err = DynamoClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+	_, err = DB.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: aws.String(os.Getenv("DYNAMODB_TABLE")),
 		Key: map[string]types.AttributeValue{
 			"question_id": &types.AttributeValueMemberS{Value: questionID},
@@ -107,7 +108,7 @@ func AddOption(questionID string, option models.Option) error {
 }
 
 func VoteOption(optionID string) error {
-	_, err := DynamoClient.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
+	_, err := DB.UpdateItem(context.TODO(), &dynamodb.UpdateItemInput{
 		TableName: aws.String(os.Getenv("DYNAMODB_TABLE")),
 		Key: map[string]types.AttributeValue{
 			"option_id": &types.AttributeValueMemberS{Value: optionID},
@@ -121,7 +122,7 @@ func VoteOption(optionID string) error {
 }
 
 func AddQuestion(eventID string, question models.Question) error {
-	_, err := DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
+	_, err := DB.PutItem(context.TODO(), &dynamodb.PutItemInput{
 		TableName: aws.String(os.Getenv("DYNAMODB_TABLE_QUESTIONS")),
 		Item: map[string]types.AttributeValue{
 			"question_id": &types.AttributeValueMemberS{Value: question.ID},
@@ -133,7 +134,7 @@ func AddQuestion(eventID string, question models.Question) error {
 }
 
 func GetQuestion(questionID string) (*models.Question, *models.Event, error) {
-	result, err := DynamoClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+	result, err := DB.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		TableName: aws.String(os.Getenv("DYNAMODB_TABLE_QUESTIONS")),
 		Key: map[string]types.AttributeValue{
 			"question_id": &types.AttributeValueMemberS{Value: questionID},

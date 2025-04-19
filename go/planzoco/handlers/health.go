@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+func HealthCheck(c *gin.Context) {
+	c.String(http.StatusOK, "OK")
 }
