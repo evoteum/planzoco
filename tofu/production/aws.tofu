@@ -29,7 +29,9 @@ module "aws_dynamodb" {
       projection_type = "all"
     }
   }
-  project_name = var.repository_name
   environment  = local.environment
+  hash_key     = "pk"
+  project_name = var.repository_name
+  range_key    = "sk"
   table_name   = "all"
 }
