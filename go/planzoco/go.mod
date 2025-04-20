@@ -1,4 +1,4 @@
-module planzoco
+module github.com/evoteum/planzoco/go/planzoco
 
 go 1.21.0
 

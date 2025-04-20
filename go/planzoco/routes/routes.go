@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"planzoco/handlers"
+	"github.com/evoteum/planzoco/go/planzoco/handlers"
 
 	"github.com/gin-gonic/gin"
 )
