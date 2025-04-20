@@ -2,34 +2,58 @@ package databases
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-var DB *dynamodb.Client
+const (
+	// TableName is the single table name for all entities
+	TableName = "planzoco"
+	// DefaultRegion is used if no region is specified
+	DefaultRegion = "eu-west-2"
+)
 
-func InitDB(ctx context.Context) error {
-	tableName := os.Getenv("DYNAMODB_TABLE")
-	if tableName == "" {
-		return fmt.Errorf("DYNAMODB_TABLE not set")
+var (
+	DynamoClient *dynamodb.Client
+)
+
+// GetTableName returns the table name based on environment variables or defaults
+func GetTableName() string {
+	if name := os.Getenv("DYNAMODB_TABLE"); name != "" {
+		return name
 	}
+	return TableName
+}
 
-	cfg, err := config.LoadDefaultConfig(ctx)
+// GetRegion returns the AWS region to use
+func GetRegion() string {
+	if region := os.Getenv("AWS_REGION"); region != "" {
+		return region
+	}
+	return DefaultRegion
+}
+
+// InitDB initializes the DynamoDB client
+func InitDB() error {
+	// Get region from environment or use default
+	region := GetRegion()
+
+	// Load AWS configuration
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithRegion(region),
+	)
+
 	if err != nil {
-		return fmt.Errorf("failed to load AWS config: %w", err)
+		log.Printf("unable to load SDK config, %v", err)
+		return err
 	}
 
-	DB = dynamodb.NewFromConfig(cfg)
-
-	_, err = DB.DescribeTable(ctx, &dynamodb.DescribeTableInput{
-		TableName: &tableName,
-	})
-	if err != nil {
-		return fmt.Errorf("could not describe table %s: %w", tableName, err)
-	}
+	// Initialize DynamoDB client
+	DynamoClient = dynamodb.NewFromConfig(cfg)
+	log.Printf("DynamoDB client initialized, using table: %s in region: %s", GetTableName(), region)
 
 	return nil
 }

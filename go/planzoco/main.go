@@ -1,16 +1,14 @@
 package main
 
 import (
-    "context"
 	"log"
-    "github.com/evoteum/planzoco/go/planzoco/databases"
-    "github.com/evoteum/planzoco/go/planzoco/routes"
+	"planzoco/databases"
+	"planzoco/routes"
 )
 
 func main() {
-	ctx := context.Background()
-	if err := databases.InitDB(ctx); err != nil {
-		log.Fatal(err)
+	if err := databases.InitDB(); err != nil {
+		log.Fatal("Failed to initialize database:", err)
 	}
 
 	r := routes.SetupRoutes()

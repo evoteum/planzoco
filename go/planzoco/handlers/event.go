@@ -3,9 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"github.com/evoteum/planzoco/go/planzoco/databases"
-	"github.com/evoteum/planzoco/go/planzoco/models"
-	"github.com/evoteum/planzoco/go/planzoco/utils"
+	"planzoco/databases"
+	"planzoco/models"
+	"planzoco/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -78,6 +78,68 @@ func GetEvent(c *gin.Context) {
 		"event":   event,
 		"baseURL": baseURL,
 	})
+}
+
+func UpdateEventForm(c *gin.Context) {
+	eventID := c.Param("id")
+
+	event, err := databases.GetEvent(eventID)
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"title":   "Error",
+			"message": "Failed to fetch event",
+		})
+		return
+	}
+
+	if event == nil {
+		c.HTML(http.StatusNotFound, "error.html", gin.H{
+			"title":   "Not Found",
+			"message": "Event not found",
+		})
+		return
+	}
+
+	c.HTML(http.StatusOK, "edit_event.html", gin.H{
+		"event": event,
+	})
+}
+
+func UpdateEvent(c *gin.Context) {
+	eventID := c.Param("id")
+
+	var event models.Event
+	if err := c.ShouldBind(&event); err != nil {
+		c.HTML(http.StatusBadRequest, "edit_event.html", gin.H{"error": err.Error(), "event": event})
+		return
+	}
+
+	// Preserve the ID
+	event.ID = eventID
+
+	if err := databases.UpdateEvent(event); err != nil {
+		c.HTML(http.StatusInternalServerError, "edit_event.html", gin.H{
+			"error": "Failed to update event",
+			"event": event,
+		})
+		return
+	}
+
+	c.Redirect(http.StatusFound, "/events/"+event.ID)
+}
+
+func DeleteEvent(c *gin.Context) {
+	eventID := c.Param("id")
+
+	if err := databases.DeleteEvent(eventID); err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"title":   "Error",
+			"message": "Failed to delete event",
+		})
+		return
+	}
+
+	c.Redirect(http.StatusFound, "/")
 }
 
 func getScheme(c *gin.Context) string {

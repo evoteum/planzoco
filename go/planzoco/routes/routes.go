@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/evoteum/planzoco/go/planzoco/handlers"
+	"planzoco/handlers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,16 +13,28 @@ func SetupRoutes() *gin.Engine {
 	// Serve static files from the static directory
 	r.Static("/static", "./static")
 
-	// Basic routes for MVP
+	// Event routes
 	r.GET("/", handlers.ListEvents)
 	r.GET("/events/new", handlers.NewEventForm)
 	r.POST("/events", handlers.CreateEvent)
 	r.GET("/events/:id", handlers.GetEvent)
+	r.GET("/events/:id/edit", handlers.UpdateEventForm)
+	r.POST("/events/:id", handlers.UpdateEvent)
+	r.POST("/events/:id/delete", handlers.DeleteEvent)
+
+	// Question routes
 	r.POST("/events/:id/questions", handlers.CreateQuestion)
-	r.POST("/questions/:id/options", handlers.CreateOption)
-	r.POST("/options/:id/vote", handlers.VoteOption)
 	r.GET("/questions/:id", handlers.GetQuestion)
-    r.GET("/healthz", handlers.HealthCheck)
+	r.GET("/questions/:id/edit", handlers.UpdateQuestionForm)
+	r.POST("/questions/:id", handlers.UpdateQuestion)
+	r.POST("/questions/:id/delete", handlers.DeleteQuestion)
+
+	// Option routes
+	r.POST("/questions/:id/options", handlers.CreateOption)
+	r.GET("/options/:id/edit", handlers.UpdateOptionForm)
+	r.POST("/options/:id", handlers.UpdateOption)
+	r.POST("/options/:id/delete", handlers.DeleteOption)
+	r.POST("/options/:id/vote", handlers.VoteOption)
 
 	return r
 }
