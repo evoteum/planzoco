@@ -2,8 +2,6 @@ module planzoco
 
 go 1.21.0
 
-toolchain go1.23.5
-
 require (
 	github.com/aws/aws-sdk-go-v2 v1.25.3
 	github.com/aws/aws-sdk-go-v2/config v1.27.7
