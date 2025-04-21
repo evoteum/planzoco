@@ -9,6 +9,7 @@ module "aws_app_runner" {
   build_command                = "go build main.go"
   dynamodb_arns                = [module.aws_dynamodb.table_arn]
   github_repository            = "https://github.com/evoteum/apprunner-go-runtime-app"
+  health_check_path            = "/"
   organisation                 = var.organisation
   port                         = var.container_port
   project_name                 = var.repository_name
@@ -16,7 +17,7 @@ module "aws_app_runner" {
     language = var.language
     version  = var.language_version
   }
-  start_command    = "./main"
+  start_command = "./main"
 
   runtime_environment_variables = {
     AWS_REGION     = var.aws_region
