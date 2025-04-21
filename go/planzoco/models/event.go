@@ -8,13 +8,11 @@ const (
 	OptionEntity   EntityType = "OPTION"
 )
 
-// DynamoItem is the base structure for all items in the single DynamoDB table
 type DynamoItem struct {
 	PK string `json:"pk" dynamodbav:"pk"`
 	SK string `json:"sk" dynamodbav:"sk"`
 }
 
-// Event represents a planning event
 type Event struct {
 	DynamoItem
 	ID         string     `json:"id" dynamodbav:"id"`
@@ -23,7 +21,6 @@ type Event struct {
 	EntityType EntityType `json:"-" dynamodbav:"entity_type"`
 }
 
-// NewEvent creates a new Event with the proper PK/SK pattern
 func NewEvent(id string, name string) Event {
 	return Event{
 		DynamoItem: DynamoItem{
@@ -36,7 +33,6 @@ func NewEvent(id string, name string) Event {
 	}
 }
 
-// Question represents a question within an event
 type Question struct {
 	DynamoItem
 	ID         string     `json:"id" dynamodbav:"id"`
@@ -46,7 +42,6 @@ type Question struct {
 	EntityType EntityType `json:"-" dynamodbav:"entity_type"`
 }
 
-// NewQuestion creates a new Question with the proper PK/SK pattern
 func NewQuestion(id string, eventID string, text string) Question {
 	return Question{
 		DynamoItem: DynamoItem{
@@ -81,7 +76,6 @@ func (q Question) WinningOptions() []Option {
 		return nil
 	}
 
-	// Collect all options with max votes
 	var winners []Option
 	for _, opt := range q.Options {
 		if opt.Votes == maxVotes {
@@ -92,7 +86,6 @@ func (q Question) WinningOptions() []Option {
 	return winners
 }
 
-// Option represents an answer option for a question
 type Option struct {
 	DynamoItem
 	ID         string     `json:"id" dynamodbav:"id"`
@@ -102,7 +95,6 @@ type Option struct {
 	EntityType EntityType `json:"-" dynamodbav:"entity_type"`
 }
 
-// NewOption creates a new Option with the proper PK/SK pattern
 func NewOption(id string, questionID string, text string) Option {
 	return Option{
 		DynamoItem: DynamoItem{

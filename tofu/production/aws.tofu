@@ -17,6 +17,7 @@ module "aws_app_runner" {
     language = var.language
     version  = var.language_version
   }
+  source_directory = var.source_path
   start_command = "./main"
 
   runtime_environment_variables = {
