@@ -3,9 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"github.com/evoteum/planzoco/go/planzoco/databases"
-	"github.com/evoteum/planzoco/go/planzoco/models"
-	"github.com/evoteum/planzoco/go/planzoco/utils"
+	"github.com/evoteum/planzoco/databases"
+	"github.com/evoteum/planzoco/models"
+	"github.com/evoteum/planzoco/utils"
 
 	"github.com/gin-gonic/gin"
 )

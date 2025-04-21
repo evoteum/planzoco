@@ -1,6 +1,6 @@
-module github.com/evoteum/planzoco/go/planzoco
+module github.com/evoteum/planzoco
 
-go 1.21.0
+go 1.21
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.25.3

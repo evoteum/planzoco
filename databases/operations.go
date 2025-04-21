@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/evoteum/planzoco/go/planzoco/models"
+	"github.com/evoteum/planzoco/models"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
