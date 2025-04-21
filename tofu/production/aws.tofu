@@ -8,7 +8,7 @@ module "aws_app_runner" {
   aws_apprunner_connection_arn = var.aws_apprunner_connection_arn
   build_command                = "go build main.go"
   dynamodb_arns                = [module.aws_dynamodb.table_arn]
-  github_repository            = var.repository_url
+  github_repository            = "https://github.com/evoteum/apprunner-go-runtime-app"
   organisation                 = var.organisation
   port                         = var.container_port
   project_name                 = var.repository_name
