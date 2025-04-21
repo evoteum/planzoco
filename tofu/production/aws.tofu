@@ -6,7 +6,7 @@ module "aws_app_runner" {
   source = "github.com/evoteum/tofu-modules//aws/app_runner"
 
   aws_apprunner_connection_arn = var.aws_apprunner_connection_arn
-  build_command                = "go build -o ./app"
+  build_command                = "go build main.go"
   dynamodb_arns                = [module.aws_dynamodb.table_arn]
   github_repository            = var.repository_url
   organisation                 = var.organisation
@@ -16,7 +16,7 @@ module "aws_app_runner" {
     language = var.language
     version  = var.language_version
   }
-  start_command    = "./app"
+  start_command    = "./main"
 
   runtime_environment_variables = {
     AWS_REGION     = var.aws_region
