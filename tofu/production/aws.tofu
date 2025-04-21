@@ -9,7 +9,6 @@ module "aws_app_runner" {
   build_command                = "go build main.go"
   dynamodb_arns                = [module.aws_dynamodb.table_arn]
   github_repository            = "https://github.com/evoteum/apprunner-go-runtime-app"
-  health_check_path            = "/"
   organisation                 = var.organisation
   port                         = var.container_port
   project_name                 = var.repository_name
