@@ -17,6 +17,9 @@ module "aws_app_runner" {
   }
   source_directory = var.source_path
 
+  build_command  = "go build -o server"
+  start_command  = "./server"
+
   runtime_environment_variables = {
     AWS_REGION     = var.aws_region
     DYNAMODB_TABLE = module.aws_dynamodb.table_name
