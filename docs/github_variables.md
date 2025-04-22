@@ -43,7 +43,7 @@ available for use within GitHub Actions here in the `planzoco` repo.
 If a repository variable and an organisation variable share the same name, the repository variable takes precedence.
 
 ### Secrets
-- `CLOUDFLARE_ZONE_ID`
+
 
 ### Variables
 - `ARTEFACT_TYPE`
