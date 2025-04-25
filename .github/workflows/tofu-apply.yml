@@ -3,7 +3,7 @@
 #    Manual changes will be **overwritten** within 24 hours.
 ###################################################################################
 
-name: tofu-apply-all-environments
+name: tofu-apply
 
 on:
   workflow_dispatch:
@@ -17,6 +17,6 @@ permissions:
   id-token: write
 
 jobs:
-  call-tofu-apply-all-environments:
-    uses: evoteum/estate-reusable-workflows/.github/workflows/tofu-apply-all-environments.yml@main
+  call-tofu-apply:
+    uses: evoteum/estate-reusable-workflows/.github/workflows/tofu-apply.yml@main
     secrets: inherit
