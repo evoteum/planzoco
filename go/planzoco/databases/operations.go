@@ -432,7 +432,6 @@ func UpdateOption(option models.Option) error {
 		}
 
 		option = models.NewOption(option.ID, existingOption.QuestionID, option.Text)
-		// Preserve votes
 		option.Votes = existingOption.Votes
 	}
 
@@ -454,7 +453,6 @@ func UpdateOption(option models.Option) error {
 
 // DeleteOption deletes an option by ID from DynamoDB
 func DeleteOption(optionID string) error {
-	// First get the option to find its question ID
 	option, err := GetOption(optionID)
 	if err != nil {
 		return fmt.Errorf("failed to get option to delete: %w", err)
@@ -484,7 +482,6 @@ func DeleteOption(optionID string) error {
 
 // VoteOption increments the vote count for an option
 func VoteOption(optionID string) error {
-	// First, get the current option
 	option, err := GetOption(optionID)
 	if err != nil {
 		return fmt.Errorf("failed to get option to vote: %w", err)
@@ -493,16 +490,13 @@ func VoteOption(optionID string) error {
 		return fmt.Errorf("option not found: %s", optionID)
 	}
 
-	// Increment vote count
 	option.Votes++
 
-	// Save back to DynamoDB
 	return UpdateOption(*option)
 }
 
 // GetOptionsByQuestionID retrieves all options for a given question ID
 func GetOptionsByQuestionID(questionID string) ([]models.Option, error) {
-	// Query using the QuestionIDIndex
 	result, err := DynamoClient.Query(context.TODO(), &dynamodb.QueryInput{
 		TableName:              aws.String(GetTableName()),
 		IndexName:              aws.String("QuestionIDIndex"),
