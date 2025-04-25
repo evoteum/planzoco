@@ -52,6 +52,7 @@ If a repository variable and an organisation variable share the same name, the r
 - `LANGUAGE_VERSION`
 - `QUAY_REPOSITORY_PATH`
 - `QUAY_REPOSITORY_URL`
+- `REPOSITORY_ID`
 - `SOURCE_PATH`
 
 
