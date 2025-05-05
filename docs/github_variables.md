@@ -45,17 +45,14 @@ available for use within GitHub Actions here in the `planzoco` repo.
 If a repository variable and an organisation variable share the same name, the repository variable takes precedence.
 
 ### Secrets
-- `CERTIFICATE_ARN`
-- `CLOUDFLARE_ZONE_ID`
+
 
 ### Variables
-- `ARTEFACT_TYPE`
-- `LANGUAGE`
-- `LANGUAGE_VERSION`
-- `QUAY_REPOSITORY_PATH`
-- `QUAY_REPOSITORY_URL`
+- `REPOSITORY_DESCRIPTION`
 - `REPOSITORY_ID`
-- `SOURCE_PATH`
+- `REPOSITORY_LANGUAGE`
+- `REPOSITORY_LANGUAGE_VERSION`
+- `REPOSITORY_SOURCE_PATH`
 
 
 ---
