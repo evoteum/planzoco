@@ -19,6 +19,7 @@ provider "aws" {
     tags = {
       Environment   = local.environment
       Project       = var.repository_name
+      RepositoryID  = var.repository_id
       ManagedBy     = "OpenTofu"
       RepositoryURL = var.repository_url
     }
