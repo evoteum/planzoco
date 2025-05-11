@@ -6,7 +6,7 @@ module "platform_service" {
   cloudflare_account_id = var.cloudflare_account_id
   health_check_path     = "/health"
 
-  cluster_arn = var.cluster_arn
+  cluster_arn = var.production_production_ecs_cluster_arn
   dynamodb = {
     table_name = "all"
     hash_key   = "pk"
@@ -36,11 +36,7 @@ module "platform_service" {
       }
     }
   }
-  environment = local.environment
-  environment_variables = {
-    AWS_REGION     = var.aws_region
-    DYNAMODB_TABLE = module.aws_dynamodb.table_name
-  }
+  environment           = local.environment
   homepage_url          = var.homepage_url
   launch_type           = var.launch_type
   listener_arn          = var.production_alb_https_listener_arn

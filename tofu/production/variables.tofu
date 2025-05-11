@@ -15,16 +15,6 @@ variable "cloudflare_account_id" {
   type        = string
 }
 
-variable "cluster_arn" {
-  description = "ARN of the ECS cluster to deploy into"
-  type        = string
-}
-
-variable "container_image" {
-  description = "Full container image URL"
-  type        = string
-}
-
 variable "container_port" {
   type        = number
   description = "The container port"
@@ -99,8 +89,23 @@ variable "private_subnet_cidrs" {
   default     = ["10.0.3.0/24", "10.0.4.0/24"]
 }
 
+variable "production_alb_dns_name" {
+  type        = string
+  description = "ALB dns name for production"
+}
+
 variable "production_alb_https_listener_arn" {
   description = "ARN of the production listener"
+  type        = string
+}
+
+variable "production_alb_security_group_id" {
+  type        = string
+  description = "ALB security group ID for production"
+}
+
+variable "production_production_ecs_cluster_arn" {
+  description = "ARN of the ECS cluster to deploy into"
   type        = string
 }
 
