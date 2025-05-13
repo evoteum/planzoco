@@ -6,7 +6,7 @@ module "platform_service" {
   cloudflare_account_id = var.cloudflare_account_id
   health_check_path     = "/health"
 
-  cluster_arn = var.production_production_ecs_cluster_arn
+  cluster_arn = var.production_ecs_cluster_arn
   dynamodb = {
     table_name = "all"
     hash_key   = "pk"

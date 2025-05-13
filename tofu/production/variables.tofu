@@ -104,7 +104,7 @@ variable "production_alb_security_group_id" {
   description = "ALB security group ID for production"
 }
 
-variable "production_production_ecs_cluster_arn" {
+variable "production_ecs_cluster_arn" {
   description = "ARN of the ECS cluster to deploy into"
   type        = string
 }
