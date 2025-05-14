@@ -2,7 +2,7 @@ module "platform_service" {
   source = "github.com/evoteum/tofu-modules//platform/service"
 
   alb_dns_name          = var.production_alb_dns_name
-  alb_security_group_id = var.production_alb_security_group_id
+  security_group_id = var.production_alb_security_group_id
   cloudflare_account_id = var.cloudflare_account_id
   health_check_path     = "/health"
 
