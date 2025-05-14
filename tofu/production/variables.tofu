@@ -160,7 +160,7 @@ variable "source_path" {
   type        = string
 }
 
-variable "subnet_ids" {
+variable "production_public_subnet_ids" {
   description = "List of subnet IDs for ECS networking"
   type        = list(string)
 }
