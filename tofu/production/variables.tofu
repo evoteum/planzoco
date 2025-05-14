@@ -125,12 +125,6 @@ variable "quay_repository_path" {
   description = "Path to the quay repository. Provided by CI."
 }
 
-variable "region" {
-  description = "AWS region"
-  type        = string
-  default     = "eu-west-2"
-}
-
 variable "repository_archived" {
   description = "Whether the repository is archived"
   type        = bool

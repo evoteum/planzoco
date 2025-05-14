@@ -46,7 +46,7 @@ module "platform_service" {
   organisation          = var.organisation
   priority              = var.priority
 
-  region                 = var.region
+  region                 = var.aws_region
   repository_archived    = var.repository_archived
   repository_description = var.repository_description
   repository_id          = var.repository_id
