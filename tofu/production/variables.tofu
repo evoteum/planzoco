@@ -160,6 +160,11 @@ variable "source_path" {
   type        = string
 }
 
+variable "subnet_ids" {
+  description = "List of subnet IDs for ECS networking"
+  type        = list(string)
+}
+
 variable "vpc_cidr" {
   type        = string
   description = "CIDR block for VPC"
