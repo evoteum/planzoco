@@ -1,12 +1,29 @@
 module "platform_service" {
   source = "github.com/evoteum/tofu-modules//platform/service"
 
-  alb_dns_name          = var.production_alb_dns_name
-  security_group_id     = var.production_alb_security_group_id
-  cloudflare_account_id = var.cloudflare_account_id
-  health_check_path     = "/health"
+  alb_dns_name           = var.production_alb_dns_name
+  aws_region             = var.aws_region
+  cloudflare_account_id  = var.cloudflare_account_id
+  cluster_arn            = var.production_ecs_cluster_arn
+  environment            = local.environment
+  health_check_path      = "/health"
+  homepage_url           = var.homepage_url
+  launch_type            = var.launch_type
+  listener_arn           = var.production_alb_https_listener_arn
+  log_retention_in_days  = var.log_retention_in_days
+  memory                 = var.memory
+  network_mode           = var.network_mode
+  organisation           = var.organisation
+  priority               = var.priority
+  repository_archived    = var.repository_archived
+  repository_description = var.repository_description
+  repository_id          = var.repository_id
+  repository_name        = var.repository_name
+  repository_url         = var.repository_url
+  repository_visibility  = var.repository_visibility
+  security_group_id      = var.production_alb_security_group_id
+  vpc_id                 = var.production_vpc_id
 
-  cluster_arn = var.production_ecs_cluster_arn
   dynamodb = {
     table_name = "all"
     hash_key   = "pk"
@@ -36,22 +53,5 @@ module "platform_service" {
       }
     }
   }
-  environment           = local.environment
-  homepage_url          = var.homepage_url
-  launch_type           = var.launch_type
-  listener_arn          = var.production_alb_https_listener_arn
-  log_retention_in_days = var.log_retention_in_days
-  memory                = var.memory
-  network_mode          = var.network_mode
-  organisation          = var.organisation
-  priority              = var.priority
 
-  region                 = var.aws_region
-  repository_archived    = var.repository_archived
-  repository_description = var.repository_description
-  repository_id          = var.repository_id
-  repository_name        = var.repository_name
-  repository_url         = var.repository_url
-  repository_visibility  = var.repository_visibility
-  vpc_id                 = var.production_vpc_id
 }
