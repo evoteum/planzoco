@@ -22,7 +22,7 @@ module "platform_service" {
   repository_url         = var.repository_url
   repository_visibility  = var.repository_visibility
   security_group_id      = var.production_alb_security_group_id
-  subnet_ids             = var.production_public_subnet_ids
+  subnet_ids             = jsondecode(var.production_public_subnet_ids)
   vpc_id                 = var.production_vpc_id
 
   dynamodb = {
