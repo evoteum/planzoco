@@ -1,0 +1,17 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/equisoft-devops/equisoft-pre-commit
+    rev: v1.1.2
+    hooks:
+      - id: tfsort
+        files: (variables|outputs)\.tofu$
+  - repo: https://github.com/tofuutils/pre-commit-opentofu
+    rev: v2.2.0
+    hooks:
+      - id: tofu_validate
+      - id: tofu_fmt
