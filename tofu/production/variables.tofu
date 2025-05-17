@@ -109,8 +109,13 @@ variable "production_ecs_cluster_arn" {
   type        = string
 }
 
+variable "production_public_subnet_ids" {
+  description = "List of subnet IDs for ECS networking"
+  type        = list(string)
+}
+
 variable "production_vpc_id" {
-  description = "ID of the VPC that this service will be installed in"
+  description = "ID of the production VPC"
   type        = string
 }
 
@@ -158,11 +163,6 @@ variable "repository_visibility" {
 variable "source_path" {
   description = "The filepath to the source code from the repo root"
   type        = string
-}
-
-variable "production_public_subnet_ids" {
-  description = "List of subnet IDs for ECS networking"
-  type        = list(string)
 }
 
 variable "vpc_cidr" {
