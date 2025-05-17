@@ -53,11 +53,7 @@ provider "cloudflare" {
 provider "github" {
   owner = var.organisation
   # Using `GITHUB_APP_XXX` environment variables in CI
-  app_auth {
-    id              = ""
-    installation_id = ""
-    pem_file        = ""
-  }
+  app_auth {}
 }
 
 provider "quay" {

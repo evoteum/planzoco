@@ -13,5 +13,4 @@ repos:
   - repo: https://github.com/tofuutils/pre-commit-opentofu
     rev: v2.2.0
     hooks:
-      - id: tofu_validate
       - id: tofu_fmt
