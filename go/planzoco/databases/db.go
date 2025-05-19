@@ -40,7 +40,7 @@ func InitDB() error {
 	)
 
 	if err != nil {
-		log.Printf("unable to load SDK config, %v", err)
+		log.Printf("Error: unable to load SDK config, %v", err)
 		return err
 	}
 
