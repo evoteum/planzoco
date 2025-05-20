@@ -10,6 +10,8 @@ on:
   push:
     paths:
       - "tofu/**"
+  schedule:
+    - cron: "0 23 * * *"  # Custom schedule
 
 permissions:
   actions: write
