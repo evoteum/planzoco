@@ -11,5 +11,5 @@ output "service_arn" {
 }
 
 output "service_environment_variables" {
-  value = module.platform_service.environment_variables
+  value = module.platform_service.service_environment_variables
 }
