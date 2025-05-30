@@ -4,7 +4,7 @@ Date: 2025-04-04
 
 ## Status
 
-Accepted
+Superceded by [4. Use of AWS Elastic Container Service](0004-use-of-aws-elastic-container-service.md)
 
 ## Context
 
