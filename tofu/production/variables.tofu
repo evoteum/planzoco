@@ -119,25 +119,9 @@ variable "production_vpc_id" {
   type        = string
 }
 
-variable "public_subnet_cidrs" {
-  type        = list(string)
-  description = "CIDR blocks for public subnets"
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
-}
-
 variable "quay_repository_path" {
   type        = string
   description = "Path to the quay repository. Provided by CI."
-}
-
-variable "repository_archived" {
-  description = "Whether the repository is archived"
-  type        = bool
-}
-
-variable "repository_description" {
-  description = "The description of this git repository"
-  type        = string
 }
 
 variable "repository_id" {
@@ -153,20 +137,4 @@ variable "repository_name" {
 variable "repository_url" {
   description = "The web address of the git repository"
   type        = string
-}
-
-variable "repository_visibility" {
-  description = "Whether this repository is public or private"
-  type        = string
-}
-
-variable "source_path" {
-  description = "The filepath to the source code from the repo root"
-  type        = string
-}
-
-variable "vpc_cidr" {
-  type        = string
-  description = "CIDR block for VPC"
-  default     = "10.0.0.0/16"
 }
