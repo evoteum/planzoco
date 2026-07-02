@@ -47,15 +47,14 @@ The configuration of this repo is managed by OpenTofu in [estate-repos](https://
 
 [//]: # (TOCGEN_TABLE_OF_CONTENTS_START)
 
-1. [Security](#security)
-1. [Background](#background)
-1. [Install](#install)
-1. [Usage](#usage)
-1. [Infrastructure](#infrastructure)
-1. [Contributing](#contributing)
-1. [License](#license)
-
-
+- [Security](#security)
+- [Background](#background)
+- [Install](#install)
+- [Usage](#usage)
+- [Infrastructure](#infrastructure)
+- [EaC](#eac)
+- [Contributing](#contributing)
+- [License](#license)
 
 [//]: # (TOCGEN_TABLE_OF_CONTENTS_END)
 
