@@ -36,6 +36,9 @@ func SetupRoutes() *gin.Engine {
 	r.POST("/options/:id/delete", handlers.DeleteOption)
 	r.POST("/options/:id/vote", handlers.VoteOption)
 
+	r.GET("/whoami", handlers.WhoAmIForm)
+	r.POST("/whoami", handlers.SetVoterName)
+
 	r.GET("/health", handlers.HealthCheck)
 
 

@@ -142,7 +142,11 @@ func VoteOption(c *gin.Context) {
 
 	questionID := option.QuestionID
 
-	if err := databases.VoteOption(optionID); err != nil {
+	if requireVoterName(c, "/questions/"+questionID) {
+		return
+	}
+
+	if err := databases.VoteOption(questionID, optionID, voterName(c)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to record vote"})
 		return
 	}

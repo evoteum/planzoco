@@ -1,0 +1,9 @@
+replicaCount: 2
+image:
+  repository: quay.io/evoteum/planzoco
+  tag: latest
+hpa:
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+database:
+  secretName: planzoco-database-app

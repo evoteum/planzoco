@@ -31,7 +31,7 @@ func CreateQuestion(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, "/events/"+eventID)
+	c.Redirect(http.StatusFound, "/questions/"+id)
 }
 
 func GetQuestion(c *gin.Context) {
@@ -55,8 +55,9 @@ func GetQuestion(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "question.html", gin.H{
-		"event":    event,
-		"question": question,
+		"event":     event,
+		"question":  question,
+		"voterName": voterName(c),
 	})
 }
 

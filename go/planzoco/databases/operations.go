@@ -2,69 +2,43 @@ package databases
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/evoteum/planzoco/models"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/jackc/pgx/v5"
 )
 
 // Event Operations
 
-// CreateEvent creates a new event in DynamoDB
+// CreateEvent creates a new event in Postgres
 func CreateEvent(event models.Event) error {
-	// Make sure the event uses the correct PK/SK pattern
-	if event.PK == "" || event.SK == "" {
-		event = models.NewEvent(event.ID, event.Name)
-	}
-
-	item, err := attributevalue.MarshalMap(event)
+	_, err := Pool.Exec(context.Background(),
+		"INSERT INTO events (id, name) VALUES ($1, $2)",
+		event.ID, event.Name,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to marshal event: %w", err)
-	}
-
-	_, err = DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName: aws.String(GetTableName()),
-		Item:      item,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to put event in DynamoDB: %w", err)
+		return fmt.Errorf("failed to insert event: %w", err)
 	}
 
 	return nil
 }
 
-// GetEvent retrieves an event by ID from DynamoDB
+// GetEvent retrieves an event by ID from Postgres
 func GetEvent(eventID string) (*models.Event, error) {
-	// Create the PK/SK for querying
-	pk := string(models.EventEntity) + "#" + eventID
-	sk := string(models.EventEntity) + "#" + eventID
+	var event models.Event
+	err := Pool.QueryRow(context.Background(),
+		"SELECT id, name FROM events WHERE id = $1", eventID,
+	).Scan(&event.ID, &event.Name)
 
-	result, err := DynamoClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
-		TableName: aws.String(GetTableName()),
-		Key: map[string]types.AttributeValue{
-			"pk": &types.AttributeValueMemberS{Value: pk},
-			"sk": &types.AttributeValueMemberS{Value: sk},
-		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to get event from DynamoDB: %w", err)
-	}
-
-	if result.Item == nil {
+	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
-
-	var event models.Event
-	err = attributevalue.UnmarshalMap(result.Item, &event)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal DynamoDB result: %w", err)
+		return nil, fmt.Errorf("failed to get event: %w", err)
 	}
 
-	// Get questions for this event
 	questions, err := GetQuestionsByEventID(eventID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get questions for event: %w", err)
@@ -74,24 +48,17 @@ func GetEvent(eventID string) (*models.Event, error) {
 	return &event, nil
 }
 
-// UpdateEvent updates an existing event in DynamoDB
+// UpdateEvent updates an existing event in Postgres
 func UpdateEvent(event models.Event) error {
-	// Ensure the event uses the correct PK/SK pattern
-	if event.PK == "" || event.SK == "" {
-		event = models.NewEvent(event.ID, event.Name)
-	}
-
-	item, err := attributevalue.MarshalMap(event)
+	tag, err := Pool.Exec(context.Background(),
+		"UPDATE events SET name = $1 WHERE id = $2",
+		event.Name, event.ID,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to marshal event: %w", err)
+		return fmt.Errorf("failed to update event: %w", err)
 	}
-
-	_, err = DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName: aws.String(GetTableName()),
-		Item:      item,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to update event in DynamoDB: %w", err)
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("event not found for update: %s", event.ID)
 	}
 
 	return nil
@@ -99,61 +66,37 @@ func UpdateEvent(event models.Event) error {
 
 // DeleteEvent deletes an event and all associated questions and options
 func DeleteEvent(eventID string) error {
-	// First get questions to get their IDs for deletion
-	questions, err := GetQuestionsByEventID(eventID)
+	tag, err := Pool.Exec(context.Background(), "DELETE FROM events WHERE id = $1", eventID)
 	if err != nil {
-		return fmt.Errorf("failed to get questions to delete: %w", err)
+		return fmt.Errorf("failed to delete event: %w", err)
 	}
-
-	// Delete each question and its options
-	for _, question := range questions {
-		if err := DeleteQuestion(question.ID); err != nil {
-			return fmt.Errorf("failed to delete question %s: %w", question.ID, err)
-		}
-	}
-
-	// Delete the event
-	pk := string(models.EventEntity) + "#" + eventID
-	sk := string(models.EventEntity) + "#" + eventID
-
-	_, err = DynamoClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
-		TableName: aws.String(GetTableName()),
-		Key: map[string]types.AttributeValue{
-			"pk": &types.AttributeValueMemberS{Value: pk},
-			"sk": &types.AttributeValueMemberS{Value: sk},
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to delete event from DynamoDB: %w", err)
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("event not found for deletion: %s", eventID)
 	}
 
 	return nil
 }
 
-// ListEvents retrieves all events from DynamoDB using the GSI for entity type
+// ListEvents retrieves all events from Postgres
 func ListEvents() ([]models.Event, error) {
-	// Use the EntityTypeIndex to query for events
-	queryInput := &dynamodb.QueryInput{
-		TableName:              aws.String(GetTableName()),
-		IndexName:              aws.String("EntityTypeIndex"),
-		KeyConditionExpression: aws.String("entity_type = :entityType"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":entityType": &types.AttributeValueMemberS{Value: string(models.EventEntity)},
-		},
-	}
-
-	result, err := DynamoClient.Query(context.TODO(), queryInput)
+	rows, err := Pool.Query(context.Background(), "SELECT id, name FROM events ORDER BY id")
 	if err != nil {
-		return nil, fmt.Errorf("failed to query events from DynamoDB: %w", err)
+		return nil, fmt.Errorf("failed to list events: %w", err)
 	}
+	defer rows.Close()
 
 	var events []models.Event
-	err = attributevalue.UnmarshalListOfMaps(result.Items, &events)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal DynamoDB query result: %w", err)
+	for rows.Next() {
+		var event models.Event
+		if err := rows.Scan(&event.ID, &event.Name); err != nil {
+			return nil, fmt.Errorf("failed to scan event: %w", err)
+		}
+		events = append(events, event)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to list events: %w", err)
 	}
 
-	// Get questions for each event
 	for i := range events {
 		questions, err := GetQuestionsByEventID(events[i].ID)
 		if err != nil {
@@ -169,57 +112,33 @@ func ListEvents() ([]models.Event, error) {
 
 // Question Operations
 
-// AddQuestion creates a new question in DynamoDB
+// AddQuestion creates a new question in Postgres
 func AddQuestion(eventID string, question models.Question) error {
-	// Make sure the question uses the correct PK/SK pattern
-	if question.PK == "" || question.SK == "" {
-		question = models.NewQuestion(question.ID, eventID, question.Text)
-	}
-
-	item, err := attributevalue.MarshalMap(question)
+	_, err := Pool.Exec(context.Background(),
+		"INSERT INTO questions (id, event_id, text) VALUES ($1, $2, $3)",
+		question.ID, eventID, question.Text,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to marshal question: %w", err)
-	}
-
-	_, err = DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName: aws.String(GetTableName()),
-		Item:      item,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to put question in DynamoDB: %w", err)
+		return fmt.Errorf("failed to insert question: %w", err)
 	}
 
 	return nil
 }
 
-// GetQuestion retrieves a question by ID from DynamoDB
+// GetQuestion retrieves a question by ID from Postgres
 func GetQuestion(questionID string) (*models.Question, error) {
-	// First, we need to find which event this question belongs to by querying the GSI
-	// We can't directly get it because we don't know the SK (event ID)
-	result, err := DynamoClient.Query(context.TODO(), &dynamodb.QueryInput{
-		TableName:              aws.String(GetTableName()),
-		IndexName:              aws.String("EntityTypeIndex"),
-		KeyConditionExpression: aws.String("entity_type = :entityType AND pk = :pk"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":entityType": &types.AttributeValueMemberS{Value: string(models.QuestionEntity)},
-			":pk":         &types.AttributeValueMemberS{Value: string(models.QuestionEntity) + "#" + questionID},
-		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to query question from DynamoDB: %w", err)
-	}
+	var question models.Question
+	err := Pool.QueryRow(context.Background(),
+		"SELECT id, event_id, text FROM questions WHERE id = $1", questionID,
+	).Scan(&question.ID, &question.EventID, &question.Text)
 
-	if len(result.Items) == 0 {
+	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
-
-	var question models.Question
-	err = attributevalue.UnmarshalMap(result.Items[0], &question)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal DynamoDB result: %w", err)
+		return nil, fmt.Errorf("failed to get question: %w", err)
 	}
 
-	// Get options for this question
 	options, err := GetOptionsByQuestionID(questionID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get options for question: %w", err)
@@ -248,34 +167,17 @@ func GetQuestionWithEvent(questionID string) (*models.Question, *models.Event, e
 	return question, event, nil
 }
 
-// UpdateQuestion updates an existing question in DynamoDB
+// UpdateQuestion updates an existing question in Postgres
 func UpdateQuestion(question models.Question) error {
-	// Ensure the question uses the correct PK/SK pattern
-	if question.PK == "" || question.SK == "" {
-		existingQuestion, err := GetQuestion(question.ID)
-		if err != nil {
-			return fmt.Errorf("failed to get existing question for update: %w", err)
-		}
-		if existingQuestion == nil {
-			return fmt.Errorf("question not found for update: %s", question.ID)
-		}
-
-		question = models.NewQuestion(question.ID, existingQuestion.EventID, question.Text)
-		// Preserve options
-		question.Options = existingQuestion.Options
-	}
-
-	item, err := attributevalue.MarshalMap(question)
+	tag, err := Pool.Exec(context.Background(),
+		"UPDATE questions SET text = $1 WHERE id = $2",
+		question.Text, question.ID,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to marshal question: %w", err)
+		return fmt.Errorf("failed to update question: %w", err)
 	}
-
-	_, err = DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName: aws.String(GetTableName()),
-		Item:      item,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to update question in DynamoDB: %w", err)
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("question not found for update: %s", question.ID)
 	}
 
 	return nil
@@ -283,41 +185,12 @@ func UpdateQuestion(question models.Question) error {
 
 // DeleteQuestion deletes a question and all its options
 func DeleteQuestion(questionID string) error {
-	// First get the question to find its event ID and options
-	question, err := GetQuestion(questionID)
+	tag, err := Pool.Exec(context.Background(), "DELETE FROM questions WHERE id = $1", questionID)
 	if err != nil {
-		return fmt.Errorf("failed to get question to delete: %w", err)
+		return fmt.Errorf("failed to delete question: %w", err)
 	}
-
-	if question == nil {
+	if tag.RowsAffected() == 0 {
 		return fmt.Errorf("question not found for deletion: %s", questionID)
-	}
-
-	// Delete all options for this question
-	options, err := GetOptionsByQuestionID(questionID)
-	if err != nil {
-		return fmt.Errorf("failed to get options to delete: %w", err)
-	}
-
-	for _, option := range options {
-		if err := DeleteOption(option.ID); err != nil {
-			return fmt.Errorf("failed to delete option %s: %w", option.ID, err)
-		}
-	}
-
-	// Delete the question using PK/SK
-	pk := string(models.QuestionEntity) + "#" + questionID
-	sk := string(models.EventEntity) + "#" + question.EventID
-
-	_, err = DynamoClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
-		TableName: aws.String(GetTableName()),
-		Key: map[string]types.AttributeValue{
-			"pk": &types.AttributeValueMemberS{Value: pk},
-			"sk": &types.AttributeValueMemberS{Value: sk},
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to delete question from DynamoDB: %w", err)
 	}
 
 	return nil
@@ -325,34 +198,26 @@ func DeleteQuestion(questionID string) error {
 
 // GetQuestionsByEventID retrieves all questions for a given event ID
 func GetQuestionsByEventID(eventID string) ([]models.Question, error) {
-	// Query using the EventIDIndex
-	queryInput := &dynamodb.QueryInput{
-		TableName:              aws.String(GetTableName()),
-		IndexName:              aws.String("EventIDIndex"),
-		KeyConditionExpression: aws.String("event_id = :eventID"),
-		FilterExpression:       aws.String("entity_type = :entityType"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":eventID":    &types.AttributeValueMemberS{Value: eventID},
-			":entityType": &types.AttributeValueMemberS{Value: string(models.QuestionEntity)},
-		},
-	}
-
-	result, err := DynamoClient.Query(context.TODO(), queryInput)
+	rows, err := Pool.Query(context.Background(),
+		"SELECT id, event_id, text FROM questions WHERE event_id = $1 ORDER BY id", eventID,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query questions by event ID: %w", err)
 	}
+	defer rows.Close()
 
 	var questions []models.Question
-	if len(result.Items) == 0 {
-		return questions, nil
+	for rows.Next() {
+		var question models.Question
+		if err := rows.Scan(&question.ID, &question.EventID, &question.Text); err != nil {
+			return nil, fmt.Errorf("failed to scan question: %w", err)
+		}
+		questions = append(questions, question)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to query questions by event ID: %w", err)
 	}
 
-	err = attributevalue.UnmarshalListOfMaps(result.Items, &questions)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal DynamoDB query result: %w", err)
-	}
-
-	// Get options for each question
 	for i := range questions {
 		options, err := GetOptionsByQuestionID(questions[i].ID)
 		if err != nil {
@@ -366,155 +231,109 @@ func GetQuestionsByEventID(eventID string) ([]models.Question, error) {
 
 // Option Operations
 
-// AddOption creates a new option in DynamoDB
+// AddOption creates a new option in Postgres
 func AddOption(questionID string, option models.Option) error {
-	// Make sure the option uses the correct PK/SK pattern
-	if option.PK == "" || option.SK == "" {
-		option = models.NewOption(option.ID, questionID, option.Text)
-	}
-
-	item, err := attributevalue.MarshalMap(option)
+	_, err := Pool.Exec(context.Background(),
+		"INSERT INTO options (id, question_id, text) VALUES ($1, $2, $3)",
+		option.ID, questionID, option.Text,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to marshal option: %w", err)
-	}
-
-	_, err = DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName: aws.String(GetTableName()),
-		Item:      item,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to put option in DynamoDB: %w", err)
+		return fmt.Errorf("failed to insert option: %w", err)
 	}
 
 	return nil
 }
 
-// GetOption retrieves an option by ID from DynamoDB
+// GetOption retrieves an option by ID from Postgres, with its vote count
 func GetOption(optionID string) (*models.Option, error) {
-	// First, we need to find which question this option belongs to by querying the GSI
-	// We can't directly get it because we don't know the SK (question ID)
-	result, err := DynamoClient.Query(context.TODO(), &dynamodb.QueryInput{
-		TableName:              aws.String(GetTableName()),
-		IndexName:              aws.String("EntityTypeIndex"),
-		KeyConditionExpression: aws.String("entity_type = :entityType AND pk = :pk"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":entityType": &types.AttributeValueMemberS{Value: string(models.OptionEntity)},
-			":pk":         &types.AttributeValueMemberS{Value: string(models.OptionEntity) + "#" + optionID},
-		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to query option from DynamoDB: %w", err)
-	}
+	var option models.Option
+	err := Pool.QueryRow(context.Background(),
+		`SELECT o.id, o.question_id, o.text, COUNT(v.voter_name)
+		 FROM options o
+		 LEFT JOIN votes v ON v.option_id = o.id
+		 WHERE o.id = $1
+		 GROUP BY o.id`, optionID,
+	).Scan(&option.ID, &option.QuestionID, &option.Text, &option.Votes)
 
-	if len(result.Items) == 0 {
+	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
-
-	var option models.Option
-	err = attributevalue.UnmarshalMap(result.Items[0], &option)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal DynamoDB result: %w", err)
+		return nil, fmt.Errorf("failed to get option: %w", err)
 	}
 
 	return &option, nil
 }
 
-// UpdateOption updates an existing option in DynamoDB
+// UpdateOption updates an existing option's text in Postgres, leaving votes untouched
 func UpdateOption(option models.Option) error {
-	// Ensure the option uses the correct PK/SK pattern
-	if option.PK == "" || option.SK == "" {
-		existingOption, err := GetOption(option.ID)
-		if err != nil {
-			return fmt.Errorf("failed to get existing option for update: %w", err)
-		}
-		if existingOption == nil {
-			return fmt.Errorf("option not found for update: %s", option.ID)
-		}
-
-		option = models.NewOption(option.ID, existingOption.QuestionID, option.Text)
-		option.Votes = existingOption.Votes
-	}
-
-	item, err := attributevalue.MarshalMap(option)
+	tag, err := Pool.Exec(context.Background(),
+		"UPDATE options SET text = $1 WHERE id = $2",
+		option.Text, option.ID,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to marshal option: %w", err)
+		return fmt.Errorf("failed to update option: %w", err)
 	}
-
-	_, err = DynamoClient.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName: aws.String(GetTableName()),
-		Item:      item,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to update option in DynamoDB: %w", err)
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("option not found for update: %s", option.ID)
 	}
 
 	return nil
 }
 
-// DeleteOption deletes an option by ID from DynamoDB
+// DeleteOption deletes an option by ID from Postgres
 func DeleteOption(optionID string) error {
-	option, err := GetOption(optionID)
+	tag, err := Pool.Exec(context.Background(), "DELETE FROM options WHERE id = $1", optionID)
 	if err != nil {
-		return fmt.Errorf("failed to get option to delete: %w", err)
+		return fmt.Errorf("failed to delete option: %w", err)
 	}
-
-	if option == nil {
+	if tag.RowsAffected() == 0 {
 		return fmt.Errorf("option not found for deletion: %s", optionID)
 	}
 
-	// Delete the option using PK/SK
-	pk := string(models.OptionEntity) + "#" + optionID
-	sk := string(models.QuestionEntity) + "#" + option.QuestionID
+	return nil
+}
 
-	_, err = DynamoClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
-		TableName: aws.String(GetTableName()),
-		Key: map[string]types.AttributeValue{
-			"pk": &types.AttributeValueMemberS{Value: pk},
-			"sk": &types.AttributeValueMemberS{Value: sk},
-		},
-	})
+// VoteOption records voterName's vote for optionID on the given question,
+// replacing any previous vote they cast on that question.
+func VoteOption(questionID, optionID, voterName string) error {
+	_, err := Pool.Exec(context.Background(),
+		`INSERT INTO votes (question_id, option_id, voter_name) VALUES ($1, $2, $3)
+		 ON CONFLICT (question_id, voter_name) DO UPDATE SET option_id = EXCLUDED.option_id`,
+		questionID, optionID, voterName,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to delete option from DynamoDB: %w", err)
+		return fmt.Errorf("failed to record vote: %w", err)
 	}
 
 	return nil
 }
 
-// VoteOption increments the vote count for an option
-func VoteOption(optionID string) error {
-	option, err := GetOption(optionID)
-	if err != nil {
-		return fmt.Errorf("failed to get option to vote: %w", err)
-	}
-	if option == nil {
-		return fmt.Errorf("option not found: %s", optionID)
-	}
-
-	option.Votes++
-
-	return UpdateOption(*option)
-}
-
-// GetOptionsByQuestionID retrieves all options for a given question ID
+// GetOptionsByQuestionID retrieves all options for a given question ID, with vote counts
 func GetOptionsByQuestionID(questionID string) ([]models.Option, error) {
-	result, err := DynamoClient.Query(context.TODO(), &dynamodb.QueryInput{
-		TableName:              aws.String(GetTableName()),
-		IndexName:              aws.String("QuestionIDIndex"),
-		KeyConditionExpression: aws.String("question_id = :questionID"),
-		FilterExpression:       aws.String("entity_type = :entityType"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":questionID": &types.AttributeValueMemberS{Value: questionID},
-			":entityType": &types.AttributeValueMemberS{Value: string(models.OptionEntity)},
-		},
-	})
+	rows, err := Pool.Query(context.Background(),
+		`SELECT o.id, o.question_id, o.text, COUNT(v.voter_name)
+		 FROM options o
+		 LEFT JOIN votes v ON v.option_id = o.id
+		 WHERE o.question_id = $1
+		 GROUP BY o.id
+		 ORDER BY o.id`, questionID,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query options by question ID: %w", err)
 	}
+	defer rows.Close()
 
 	var options []models.Option
-	err = attributevalue.UnmarshalListOfMaps(result.Items, &options)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal DynamoDB query result: %w", err)
+	for rows.Next() {
+		var option models.Option
+		if err := rows.Scan(&option.ID, &option.QuestionID, &option.Text, &option.Votes); err != nil {
+			return nil, fmt.Errorf("failed to scan option: %w", err)
+		}
+		options = append(options, option)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to query options by question ID: %w", err)
 	}
 
 	return options, nil

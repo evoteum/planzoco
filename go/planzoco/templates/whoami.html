@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Who are you? - planzoco</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>planzoco</h1>
+    <h2>What does this group know you as?</h2>
+    <p class="instructions">Just a name so your vote counts once and you can change your mind later. No password, no account.</p>
+
+    {{if .error}}
+        <p style="color: red">{{.error}}</p>
+    {{end}}
+
+    <form action="/whoami" method="POST">
+        <input type="hidden" name="next" value="{{.next}}">
+        <div>
+            <label for="name">Your name:</label>
+            <input type="text" id="name" name="name" required autofocus>
+        </div>
+        <button type="submit">Continue</button>
+    </form>
+</body>
+</html>

@@ -24,7 +24,7 @@
                             No votes yet
                         {{end}}
                     </div>
-                    <a href="/questions/{{.ID}}" class="vote-link">Vote!</a>
+                    <a href="/questions/{{.ID}}" class="vote-link">{{if .Options}}Vote!{{else}}Add options{{end}}</a>
                 </div>
             {{end}}
         </div>
@@ -59,4 +59,4 @@
         input.placeholder = `New question eg '${randomExample}'`;
     </script>
 </body>
-</html> 
+</html>
