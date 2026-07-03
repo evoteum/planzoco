@@ -1,4 +1,4 @@
-replicaCount: 2
+replicaCount: 5
 image:
   repository: quay.io/evoteum/planzoco
   tag: 2026-07-03-b383e24
