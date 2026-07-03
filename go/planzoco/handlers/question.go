@@ -18,6 +18,10 @@ func CreateQuestion(c *gin.Context) {
 		return
 	}
 
+	if requireVoterName(c, "/events/"+eventID) {
+		return
+	}
+
 	id, err := utils.GenerateID()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate ID"})
@@ -25,6 +29,7 @@ func CreateQuestion(c *gin.Context) {
 	}
 	question.ID = id
 	question.EventID = eventID
+	question.AskedBy = voterName(c)
 
 	if err := databases.AddQuestion(eventID, question); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save question"})

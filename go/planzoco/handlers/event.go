@@ -109,13 +109,12 @@ func UpdateEvent(c *gin.Context) {
 	eventID := c.Param("id")
 
 	var event models.Event
+	event.ID = eventID
+
 	if err := c.ShouldBind(&event); err != nil {
 		c.HTML(http.StatusBadRequest, "edit_event.html", gin.H{"error": err.Error(), "event": event})
 		return
 	}
-
-	// Preserve the ID
-	event.ID = eventID
 
 	if err := databases.UpdateEvent(event); err != nil {
 		c.HTML(http.StatusInternalServerError, "edit_event.html", gin.H{
