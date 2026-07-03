@@ -20,8 +20,11 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS questions (
 	id TEXT PRIMARY KEY,
 	event_id TEXT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-	text TEXT NOT NULL CHECK (char_length(text) <= 255)
+	text TEXT NOT NULL CHECK (char_length(text) <= 255),
+	asked_by TEXT NOT NULL CHECK (char_length(asked_by) <= 255)
 );
+
+ALTER TABLE questions ADD COLUMN IF NOT EXISTS asked_by TEXT NOT NULL DEFAULT 'Unknown' CHECK (char_length(asked_by) <= 255);
 
 CREATE TABLE IF NOT EXISTS options (
 	id TEXT PRIMARY KEY,
