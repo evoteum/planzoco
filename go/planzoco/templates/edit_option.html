@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Option - planzoco</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>planzoco</h1>
+    <h2>{{.question.Text}}</h2>
+    <a href="/questions/{{.question.ID}}" class="nav-link">Back to Question</a>
+    <h2>Edit Option</h2>
+
+    {{if .error}}
+        <p style="color: red">{{.error}}</p>
+    {{end}}
+
+    <form action="/options/{{.option.ID}}" method="POST">
+        <div>
+            <label for="text">Option:</label>
+            <input type="text" id="text" name="text" value="{{.option.Text}}" required>
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <form action="/options/{{.option.ID}}/delete" method="POST" onsubmit="return confirm('Delete this option?');">
+        <button type="submit" class="delete-button">Delete Option</button>
+    </form>
+</body>
+</html>

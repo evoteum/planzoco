@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit {{.event.Name}} - planzoco</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>planzoco</h1>
+    <h2>Edit Event</h2>
+    <a href="/events/{{.event.ID}}" class="nav-link">Back to Event</a>
+
+    {{if .error}}
+        <p style="color: red">{{.error}}</p>
+    {{end}}
+
+    <form action="/events/{{.event.ID}}" method="POST">
+        <div>
+            <label for="name">Event Name:</label>
+            <input type="text" id="name" name="name" value="{{.event.Name}}" required>
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <form action="/events/{{.event.ID}}/delete" method="POST" onsubmit="return confirm('Delete this event and everything in it? This cannot be undone.');">
+        <button type="submit" class="delete-button">Delete Event</button>
+    </form>
+</body>
+</html>

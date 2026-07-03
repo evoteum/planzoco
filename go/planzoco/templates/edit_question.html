@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Question - planzoco</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>planzoco</h1>
+    <h2>{{.event.Name}}</h2>
+    <a href="/questions/{{.question.ID}}" class="nav-link">Back to Question</a>
+    <h2>Edit Question</h2>
+
+    {{if .error}}
+        <p style="color: red">{{.error}}</p>
+    {{end}}
+
+    <form action="/questions/{{.question.ID}}" method="POST">
+        <div>
+            <label for="text">Question:</label>
+            <input type="text" id="text" name="text" value="{{.question.Text}}" required>
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <form action="/questions/{{.question.ID}}/delete" method="POST" onsubmit="return confirm('Delete this question and its options? This cannot be undone.');">
+        <button type="submit" class="delete-button">Delete Question</button>
+    </form>
+</body>
+</html>
