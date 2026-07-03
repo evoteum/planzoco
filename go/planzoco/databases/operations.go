@@ -115,8 +115,8 @@ func ListEvents() ([]models.Event, error) {
 // AddQuestion creates a new question in Postgres
 func AddQuestion(eventID string, question models.Question) error {
 	_, err := Pool.Exec(context.Background(),
-		"INSERT INTO questions (id, event_id, text) VALUES ($1, $2, $3)",
-		question.ID, eventID, question.Text,
+		"INSERT INTO questions (id, event_id, text, asked_by) VALUES ($1, $2, $3, $4)",
+		question.ID, eventID, question.Text, question.AskedBy,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert question: %w", err)
@@ -129,8 +129,8 @@ func AddQuestion(eventID string, question models.Question) error {
 func GetQuestion(questionID string) (*models.Question, error) {
 	var question models.Question
 	err := Pool.QueryRow(context.Background(),
-		"SELECT id, event_id, text FROM questions WHERE id = $1", questionID,
-	).Scan(&question.ID, &question.EventID, &question.Text)
+		"SELECT id, event_id, text, asked_by FROM questions WHERE id = $1", questionID,
+	).Scan(&question.ID, &question.EventID, &question.Text, &question.AskedBy)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
@@ -199,7 +199,7 @@ func DeleteQuestion(questionID string) error {
 // GetQuestionsByEventID retrieves all questions for a given event ID
 func GetQuestionsByEventID(eventID string) ([]models.Question, error) {
 	rows, err := Pool.Query(context.Background(),
-		"SELECT id, event_id, text FROM questions WHERE event_id = $1 ORDER BY id", eventID,
+		"SELECT id, event_id, text, asked_by FROM questions WHERE event_id = $1 ORDER BY id", eventID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query questions by event ID: %w", err)
@@ -209,7 +209,7 @@ func GetQuestionsByEventID(eventID string) ([]models.Question, error) {
 	var questions []models.Question
 	for rows.Next() {
 		var question models.Question
-		if err := rows.Scan(&question.ID, &question.EventID, &question.Text); err != nil {
+		if err := rows.Scan(&question.ID, &question.EventID, &question.Text, &question.AskedBy); err != nil {
 			return nil, fmt.Errorf("failed to scan question: %w", err)
 		}
 		questions = append(questions, question)
@@ -244,16 +244,17 @@ func AddOption(questionID string, option models.Option) error {
 	return nil
 }
 
-// GetOption retrieves an option by ID from Postgres, with its vote count
+// GetOption retrieves an option by ID from Postgres, with its vote count and voters
 func GetOption(optionID string) (*models.Option, error) {
 	var option models.Option
 	err := Pool.QueryRow(context.Background(),
-		`SELECT o.id, o.question_id, o.text, COUNT(v.voter_name)
+		`SELECT o.id, o.question_id, o.text, COUNT(v.voter_name),
+		        COALESCE(array_agg(v.voter_name ORDER BY v.voter_name) FILTER (WHERE v.voter_name IS NOT NULL), '{}')
 		 FROM options o
 		 LEFT JOIN votes v ON v.option_id = o.id
 		 WHERE o.id = $1
 		 GROUP BY o.id`, optionID,
-	).Scan(&option.ID, &option.QuestionID, &option.Text, &option.Votes)
+	).Scan(&option.ID, &option.QuestionID, &option.Text, &option.Votes, &option.Voters)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
@@ -309,10 +310,11 @@ func VoteOption(questionID, optionID, voterName string) error {
 	return nil
 }
 
-// GetOptionsByQuestionID retrieves all options for a given question ID, with vote counts
+// GetOptionsByQuestionID retrieves all options for a given question ID, with vote counts and voters
 func GetOptionsByQuestionID(questionID string) ([]models.Option, error) {
 	rows, err := Pool.Query(context.Background(),
-		`SELECT o.id, o.question_id, o.text, COUNT(v.voter_name)
+		`SELECT o.id, o.question_id, o.text, COUNT(v.voter_name),
+		        COALESCE(array_agg(v.voter_name ORDER BY v.voter_name) FILTER (WHERE v.voter_name IS NOT NULL), '{}')
 		 FROM options o
 		 LEFT JOIN votes v ON v.option_id = o.id
 		 WHERE o.question_id = $1
@@ -327,7 +329,7 @@ func GetOptionsByQuestionID(questionID string) ([]models.Option, error) {
 	var options []models.Option
 	for rows.Next() {
 		var option models.Option
-		if err := rows.Scan(&option.ID, &option.QuestionID, &option.Text, &option.Votes); err != nil {
+		if err := rows.Scan(&option.ID, &option.QuestionID, &option.Text, &option.Votes, &option.Voters); err != nil {
 			return nil, fmt.Errorf("failed to scan option: %w", err)
 		}
 		options = append(options, option)
