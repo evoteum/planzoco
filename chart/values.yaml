@@ -1,7 +1,7 @@
 replicaCount: 2
 image:
   repository: quay.io/evoteum/planzoco
-  tag: latest
+  tag: 2026-07-03-d850da4
 hpa:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 70
