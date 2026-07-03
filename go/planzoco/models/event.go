@@ -12,6 +12,7 @@ type Question struct {
 	ID      string   `json:"id"`
 	EventID string   `json:"event_id"`
 	Text    string   `json:"text" form:"text" binding:"required,max=255"`
+	AskedBy string   `json:"asked_by"`
 	Options []Option `json:"options,omitempty"`
 }
 
@@ -47,8 +48,9 @@ func (q Question) WinningOptions() []Option {
 }
 
 type Option struct {
-	ID         string `json:"id"`
-	QuestionID string `json:"question_id"`
-	Text       string `json:"text" form:"text" binding:"required,max=255"`
-	Votes      int    `json:"votes"`
+	ID         string   `json:"id"`
+	QuestionID string   `json:"question_id"`
+	Text       string   `json:"text" form:"text" binding:"required,max=255"`
+	Votes      int      `json:"votes"`
+	Voters     []string `json:"voters"`
 }
