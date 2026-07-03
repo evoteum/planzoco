@@ -135,20 +135,17 @@ Planzoco has no accounts, anyone with the link can create, suggest, and vote.
 
 ## Infrastructure
 
-Planzoco originally ran on Evoteum's AWS ECS "golden path", provisioned by the shared `platform_service` OpenTofu
-module, with DynamoDB for storage. It was migrated to our bare metal Kubernetes cluster: the application is packaged
-as a Helm chart in [`chart/`](chart/), deployed via ArgoCD (registered in
-[kubernetes-lab-services](https://github.com/evoteum/kubernetes-lab-services)), and backed by Postgres managed
-in-cluster by [CloudNativePG](https://cloudnative-pg.io/) instead of DynamoDB. See
-[ADR 0005](docs/adr/0005-migrate-to-bare-metal-kubernetes-and-cloudnativepg.md) for the full rationale.
+Planzoco originally ran on Evoteum's AWS ECS golden path, provisioned by the shared
+[`platform_service`](https://github.com/evoteum/tofu-modules/tree/main/platform/service)
+OpenTofu module, with DynamoDB for storage. It was migrated to our bare metal
+Kubernetes cluster: the application is packaged as a Helm chart in
+[`chart/`](chart/), deployed via ArgoCD (registered in
+[kubernetes-lab-services](https://github.com/evoteum/kubernetes-lab-services)), and
+backed by Postgres managed in-cluster by
+[CloudNativePG](https://cloudnative-pg.io/) instead of DynamoDB. See
+[ADR 0005](docs/adr/0005-migrate-to-bare-metal-kubernetes-and-cloudnativepg.md)
+for the full rationale.
 
-The AWS infrastructure that previously backed it, in [`tofu/production`](tofu/production), has been wound down.
-
-## EaC
-
-We aim to follow the "Everything as Code" practice wherever possible. We prefer to define everything in code,
-including things that might not "usually" be defined in code. For more info, see the estate-repos repo, where all our
-repositories are defined and maintained.
 
 
 [//]: # (## API)
