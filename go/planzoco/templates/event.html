@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{.event.Name}} - planzoco</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     <h1>planzoco</h1>
     <h2>{{.event.Name}}</h2>
-    <a href="/events/new" class="nav-link">Create another Event</a>
+    <div class="row-actions">
+        <a href="/events/new" class="nav-link">Create another Event</a>
+        <a href="/events/{{.event.ID}}/edit" class="edit-link">Edit Event</a>
+        <form action="/events/{{.event.ID}}/delete" method="POST" onsubmit="return confirm('Delete this event and everything in it? This cannot be undone.');">
+            <button type="submit" class="delete-link">Delete Event</button>
+        </form>
+    </div>
     <p class="instructions">What does your group need to decide?</p>
     <div class="card">
         <div class="qa-grid">
             {{range .event.Questions}}
                 <div class="qa-row">
-                    <div class="question-text">{{.Text}}</div>
+                    <div class="question-text">{{.Text}}<span class="asked-by">asked by {{.AskedBy}}</span></div>
                     <div class="answer-text">
                         {{with .WinningOptions}}
                             {{range $i, $opt := .}}
@@ -24,7 +32,13 @@
                             No votes yet
                         {{end}}
                     </div>
-                    <a href="/questions/{{.ID}}" class="vote-link">{{if .Options}}Vote!{{else}}Add options{{end}}</a>
+                    <div class="row-actions">
+                        <a href="/questions/{{.ID}}" class="vote-link">{{if .Options}}Vote!{{else}}Add options{{end}}</a>
+                        <a href="/questions/{{.ID}}/edit" class="edit-link">Edit</a>
+                        <form action="/questions/{{.ID}}/delete" method="POST" onsubmit="return confirm('Delete this question and its options? This cannot be undone.');">
+                            <button type="submit" class="delete-link">Delete</button>
+                        </form>
+                    </div>
                 </div>
             {{end}}
         </div>

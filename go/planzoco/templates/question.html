@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{.question.Text}} - planzoco</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
@@ -14,15 +16,28 @@
     {{end}}
     <div class="card">
         <h2>{{.question.Text}}</h2>
+        <p class="asked-by">asked by {{.question.AskedBy}}</p>
+        <div class="row-actions">
+            <a href="/questions/{{.question.ID}}/edit" class="edit-link">Edit Question</a>
+            <form action="/questions/{{.question.ID}}/delete" method="POST" onsubmit="return confirm('Delete this question and its options? This cannot be undone.');">
+                <button type="submit" class="delete-link">Delete Question</button>
+            </form>
+        </div>
 
         <div class="options">
             {{range .question.Options}}
                 <div class="option">
                     <p class="option-text">{{.Text}}</p>
-                    <span class="votes">Votes: {{.Votes}}</span>
+                    <span class="votes">Votes: {{.Votes}}{{if .Voters}} ({{range $i, $voter := .Voters}}{{if $i}}, {{end}}{{$voter}}{{end}}){{end}}</span>
                     <form action="/options/{{.ID}}/vote" method="POST">
                         <button type="submit">Vote</button>
                     </form>
+                    <div class="row-actions">
+                        <a href="/options/{{.ID}}/edit" class="edit-link">Edit</a>
+                        <form action="/options/{{.ID}}/delete" method="POST" onsubmit="return confirm('Delete this option?');">
+                            <button type="submit" class="delete-link">Delete</button>
+                        </form>
+                    </div>
                 </div>
             {{end}}
         </div>

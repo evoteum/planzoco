@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>New Event - planzoco</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 
@@ -8,11 +10,11 @@
 <body>
     <h1>planzoco</h1>
     <h2>Create New Event</h2>
-    
+
     {{if .error}}
         <p style="color: red">{{.error}}</p>
     {{end}}
-    
+
     <form action="/events" method="POST">
         <div>
             <label for="name">Event Name:</label>
@@ -21,4 +23,4 @@
         <button type="submit">Create Event</button>
     </form>
 </body>
-</html> 
+</html>
