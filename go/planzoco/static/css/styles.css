@@ -102,7 +102,7 @@ h1 + h2 {
 
 .option {
     display: grid;
-    grid-template-columns: 1fr 120px auto;
+    grid-template-columns: 1fr 120px auto auto;
     align-items: center;
     padding: 1.25rem;
     background-color: white;
@@ -242,6 +242,14 @@ button:active {
     color: #334155;
 }
 
+.asked-by {
+    display: block;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-top: 0.25rem;
+}
+
 .edit-link {
     color: #3b82f6;
     text-decoration: none;
@@ -250,6 +258,42 @@ button:active {
 
 .edit-link:hover {
     text-decoration: underline;
+}
+
+.delete-link {
+    color: #ef4444;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.delete-link:hover {
+    text-decoration: underline;
+}
+
+.delete-button {
+    background-color: transparent;
+    color: #ef4444;
+    border: 2px solid #ef4444;
+}
+
+.delete-button:hover {
+    background-color: #ef4444;
+    color: white;
+}
+
+.row-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+button.edit-link,
+button.delete-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-weight: inherit;
+    cursor: pointer;
 }
 
 .vote-link {
@@ -380,4 +424,78 @@ button:active {
     margin-bottom: 2rem;
     max-width: 600px;
     text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+        margin: 1.25rem 0;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+        margin: 1rem 0;
+    }
+
+    h1 + h2 {
+        font-size: 1.3rem;
+    }
+
+    .card,
+    .event,
+    .share-card {
+        padding: 1.25rem;
+    }
+
+    .qa-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        text-align: left;
+    }
+
+    .qa-row .vote-link {
+        justify-self: start;
+    }
+
+    .option {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        text-align: left;
+    }
+
+    .votes {
+        text-align: left;
+        padding-right: 0;
+    }
+
+    .option form {
+        justify-self: start;
+    }
+
+    .share-url-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .share-url {
+        width: 100%;
+        overflow-wrap: break-word;
+        word-break: break-all;
+    }
+
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    button,
+    .button-link {
+        width: 100%;
+    }
 }
